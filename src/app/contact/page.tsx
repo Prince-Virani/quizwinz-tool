@@ -9,7 +9,7 @@ export default function ContactPage() {
 				{/* Header */}
 				<div className='flex items-center gap-4 mb-6'>
 					<Link
-						href='/home'
+						href='/start'
 						className='p-2 hover:bg-slate-800 rounded-lg transition-colors'>
 						<ArrowLeft className='w-6 h-6 text-slate-300' />
 					</Link>
