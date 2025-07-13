@@ -23,7 +23,7 @@ export default function TermsPage() {
             <section>
               <h3 className="text-lg font-semibold text-white mb-2">1. Acceptance of Terms</h3>
               <p>
-                By accessing and using Quizwinz, you accept and agree to be bound by the terms and provision of this
+                By accessing and using Yaem2022 Quiz, you accept and agree to be bound by the terms and provision of this
                 agreement.
               </p>
             </section>
@@ -31,7 +31,7 @@ export default function TermsPage() {
             <section>
               <h3 className="text-lg font-semibold text-white mb-2">2. Use License</h3>
               <p>
-                Permission is granted to temporarily use Quizwinz for personal, non-commercial transitory viewing only.
+                Permission is granted to temporarily use Yaem2022 Quiz for personal, non-commercial transitory viewing only.
                 This is the grant of a license, not a transfer of title.
               </p>
             </section>
@@ -39,7 +39,7 @@ export default function TermsPage() {
             <section>
               <h3 className="text-lg font-semibold text-white mb-2">3. Virtual Currency</h3>
               <ul className="list-disc list-inside space-y-1">
-                <li>Coins earned in Quizwinz have no real-world monetary value</li>
+                <li>Coins earned in Yaem2022 Quiz have no real-world monetary value</li>
                 <li>Coins cannot be exchanged for real money or prizes</li>
                 <li>Coins are for entertainment purposes only</li>
                 <li>We reserve the right to modify coin values and rewards</li>
@@ -68,7 +68,7 @@ export default function TermsPage() {
             <section>
               <h3 className="text-lg font-semibold text-white mb-2">6. Limitation of Liability</h3>
               <p>
-                Quizwinz shall not be liable for any indirect, incidental, special, consequential, or punitive damages
+                Yaem2022 Quiz shall not be liable for any indirect, incidental, special, consequential, or punitive damages
                 resulting from your use of the service.
               </p>
             </section>
@@ -83,7 +83,7 @@ export default function TermsPage() {
 
             <div className="bg-gradient-to-r from-orange-400/20 to-yellow-500/20 p-4 rounded-lg border border-orange-500/30">
               <p className="text-orange-300 font-medium">
-                By continuing to use Quizwinz, you agree to these terms and conditions.
+                By continuing to use Yaem2022 Quiz, you agree to these terms and conditions.
               </p>
             </div>
           </CardContent>

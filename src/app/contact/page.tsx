@@ -39,7 +39,7 @@ export default function ContactPage() {
 										Email
 									</h3>
 									<p className='text-slate-300'>
-										support@quizwinz.com
+										netflixgame.co@gmail.com
 									</p>
 								</div>
 							</div>
@@ -51,7 +51,7 @@ export default function ContactPage() {
 										Phone
 									</h3>
 									<p className='text-slate-300'>
-										+1 (555) 123-4567
+										***
 									</p>
 								</div>
 							</div>

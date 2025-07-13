@@ -33,7 +33,7 @@ export default function DisclaimerPage() {
 								General Information
 							</h3>
 							<p>
-								The information on Quizwinz is provided on an
+								The information on Yaem2022 Quiz is provided on an
 								&quot;as is&quot; basis. To the fullest extent
 								permitted by law, this Company excludes all
 								representations, warranties, conditions and
@@ -46,7 +46,7 @@ export default function DisclaimerPage() {
 								Educational Purpose
 							</h3>
 							<p>
-								Quizwinz is designed for entertainment and
+								Yaem2022 Quiz is designed for entertainment and
 								educational purposes only. The quiz content is
 								intended to be fun and informative but should
 								not be considered as professional advice or
@@ -59,14 +59,14 @@ export default function DisclaimerPage() {
 								No Real Monetary Value
 							</h3>
 							<p>
-								The coins and rewards earned in Quizwinz have no
+								The coins and rewards earned in Yaem2022 Quiz have no
 								real-world monetary value and cannot be:
 							</p>
 							<ul className='list-disc list-inside space-y-1 mt-2'>
 								<li>Exchanged for real money</li>
 								<li>Transferred to other users</li>
 								<li>Redeemed for physical prizes</li>
-								<li>Used outside of the Quizwinz platform</li>
+								<li>Used outside of the Yaem2022 Quiz platform</li>
 							</ul>
 						</section>
 
@@ -126,7 +126,7 @@ export default function DisclaimerPage() {
 								Service Availability
 							</h3>
 							<p>
-								We do not guarantee that Quizwinz will be
+								We do not guarantee that Yaem2022 Quiz will be
 								available at all times. The service may be
 								temporarily unavailable due to maintenance,
 								updates, or technical issues.
@@ -139,7 +139,7 @@ export default function DisclaimerPage() {
 							</h3>
 							<p>
 								We reserve the right to modify, suspend, or
-								discontinue any aspect of Quizwinz at any time
+								discontinue any aspect of Yaem2022 Quiz at any time
 								without prior notice.
 							</p>
 						</section>
@@ -170,7 +170,7 @@ export default function DisclaimerPage() {
 
 						<div className='bg-gradient-to-r from-orange-400/20 to-yellow-500/20 p-4 rounded-lg border border-orange-500/30'>
 							<p className='text-orange-300 font-medium'>
-								By using Quizwinz, you acknowledge that you have
+								By using Yaem2022 Quiz, you acknowledge that you have
 								read and understood this disclaimer.
 							</p>
 						</div>

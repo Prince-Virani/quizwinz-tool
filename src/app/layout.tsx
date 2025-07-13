@@ -7,27 +7,27 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
 	title: {
-		default: "Quizwinz - Play and Win Rewards",
-		template: "%s | Quizwinz",
+		default: "Yaem2022 Quiz - Play and Win Rewards",
+		template: "%s | Yaem2022 Quiz",
 	},
 	description:
 		"Play engaging quizzes and earn reward coins. Test your knowledge and win exciting prizes with Quizwinz.",
 	keywords:
 		"quiz, rewards, play, win, quizzes, knowledge, games, online quizzes",
-	authors: [{ name: "Quizwinz" }],
-	creator: "Quizwinz",
+	authors: [{ name: "Yaem2022 Quiz" }],
+	creator: "Yaem2022 Quiz",
 	openGraph: {
-		title: "Quizwinz - Play and Win Rewards",
+		title: "Yaem2022 Quiz - Play and Win Rewards",
 		description:
 			"Play engaging quizzes and earn reward coins. Test your knowledge and win exciting prizes with Quizwinz.",
-		url: "https://quizwinz.com",
-		siteName: "Quizwinz",
+		url: "https://quiz.yaem2022.org/",
+		siteName: "Yaem2022 Quiz",
 		images: [
 			{
-				url: "https://quizwinz.com/og-image.png",
+				url: "https://quiz.yaem2022.org/og-image.png",
 				width: 1200,
 				height: 630,
-				alt: "Quizwinz Logo",
+				alt: "Yaem2022 Quiz Logo",
 			},
 		],
 		locale: "en_US",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 		},
 	},
 	alternates: {
-		canonical: "https://quizwinz.com",
+		canonical: "https://quiz.yaem2022.org",
 	},
 };
 
@@ -82,7 +82,7 @@ export default function RootLayout({
 					crossOrigin='anonymous'
 					src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5607455208212717'
 				/>
-				<meta name='application-name' content='Quizwinz' />
+				<meta name='application-name' content='Yaem2022 Quiz' />
 				<meta name='format-detection' content='telephone=no' />
 				<meta name='theme-color' content='#000000' />
 				<link rel='shortcut icon' href='/favicon.ico' />
