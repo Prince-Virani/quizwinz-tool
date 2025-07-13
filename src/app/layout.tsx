@@ -61,7 +61,7 @@ export default function RootLayout({
 				{/* Google Analytics */}
 				<script
 					async
-					src='https://www.googletagmanager.com/gtag/js?id=GOOGLE_ANALYTICS_ID'
+					src='https://www.googletagmanager.com/gtag/js?id=G-T7XJG2QM8V'
 				/>
 				<script
 					dangerouslySetInnerHTML={{
@@ -69,7 +69,7 @@ export default function RootLayout({
 							window.dataLayer = window.dataLayer || [];
 							function gtag(){dataLayer.push(arguments);}
 							gtag('js', new Date());
-							gtag('config', 'GOOGLE_ANALYTICS_ID', {
+							gtag('config', 'G-T7XJG2QM8V', {
 								'page_path': window.location.pathname,
 							});
 						`,
@@ -80,7 +80,7 @@ export default function RootLayout({
 				<script
 					async
 					crossOrigin='anonymous'
-					src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXXXXX'
+					src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5607455208212717'
 				/>
 				<meta name='application-name' content='Quizwinz' />
 				<meta name='format-detection' content='telephone=no' />

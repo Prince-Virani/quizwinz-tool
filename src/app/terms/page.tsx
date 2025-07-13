@@ -8,7 +8,7 @@ export default function TermsPage() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
-          <Link href="/home" className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
+          <Link href="/start" className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
             <ArrowLeft className="w-6 h-6 text-slate-300" />
           </Link>
           <h1 className="text-2xl font-bold text-white">Terms & Conditions</h1>
