@@ -225,29 +225,8 @@ export default function WelcomePage() {
 
 	return (
 		<div className='min-h-screen flex items-center justify-center p-4 bg-slate-900'>
-			<script 
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5607455208212717"
-        crossOrigin="anonymous"
-      />
-      
-      <Card className='w-full max-w-md bg-slate-800 border-slate-700'>
-        <CardContent className='p-6'>
-          {/* ADVERTISEMENT - PLACED ABOVE QUICK START */}
-          <div className="mb-6 bg-slate-700 p-4 rounded-lg">
-            <div className="text-center mb-3">
-              <span className="text-xs font-semibold text-orange-400">ADVERTISEMENT</span>
-            </div>
-            <div className="text-center">
-              <ins className="adsbygoogle"
-                   style={{display:'block'}}
-                   data-ad-client="ca-pub-5607455208212717D"
-                   data-ad-slot="5400566062"
-                   data-ad-format="auto"
-                   data-full-width-responsive="true"></ins>
-            </div>
-          </div>
-			{/* <Card className='w-full max-w-md bg-slate-800 border-slate-700'>
-				<CardContent className='p-6'> */}
+			<Card className='w-full max-w-md bg-slate-800 border-slate-700'>
+				<CardContent className='p-6'>
 					{/* Header */}
 					<div className='text-center mb-6'>
 						<h1 className='text-2xl font-bold text-white mb-2'>
