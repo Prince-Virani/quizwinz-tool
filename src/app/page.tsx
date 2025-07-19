@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, XCircle } from "lucide-react";
+import AdSenseBanner from "@/components/adSenseBanner";
 
 const demoQuestions = [
 	{
@@ -228,6 +229,8 @@ export default function WelcomePage() {
 			<Card className='w-full max-w-md bg-slate-800 border-slate-700'>
 				<CardContent className='p-6'>
 					{/* Header */}
+					<AdSenseBanner />
+
 					<div className='text-center mb-6'>
 						<h1 className='text-2xl font-bold text-white mb-2'>
 							Quick Start
