@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import AdSenseBanner from "@/components/adSenseBanner";
 import { useRouter } from "next/navigation";
 import {
 	Menu,
@@ -454,6 +455,18 @@ export default function HomePage() {
 						onClick={() => setShowMenu(false)}
 					/>
 					<div className='fixed top-0 right-0 z-50 h-full w-80 bg-slate-800 shadow-2xl transform transition-transform duration-300'>
+							<AdSenseBanner />
+		<label style={{
+  display: 'block',
+  margin: '0px auto',
+  width: 'fit-content',
+  letterSpacing: '4px',
+  color: 'rgb(65, 77, 101)',
+  font: '400 9px / 2 Arial, sans-serif',
+  opacity: 0.7
+}}>
+  ADVERTISEMENT
+</label>
 						<div className='p-4'>
 							{/* Header */}
 							<div className='flex items-center justify-between mb-6'>
