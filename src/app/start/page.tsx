@@ -444,18 +444,7 @@ export default function HomePage() {
 							{coins}
 						</span>
 					</div>
-				</div>
-			</header>
-
-			{/* Slide-out Menu */}
-			{showMenu && (
-				<>
-					<div
-						className='fixed inset-0 z-40 bg-black/50 backdrop-blur-sm'
-						onClick={() => setShowMenu(false)}
-					/>
-					<div className='fixed top-0 right-0 z-50 h-full w-80 bg-slate-800 shadow-2xl transform transition-transform duration-300'>
-							<AdSenseBanner />
+					<AdSenseBanner />
 		<label style={{
   display: 'block',
   margin: '0px auto',
@@ -467,6 +456,18 @@ export default function HomePage() {
 }}>
   ADVERTISEMENT
 </label>
+				</div>
+			</header>
+
+			{/* Slide-out Menu */}
+			{showMenu && (
+				<>
+					<div
+						className='fixed inset-0 z-40 bg-black/50 backdrop-blur-sm'
+						onClick={() => setShowMenu(false)}
+					/>
+					<div className='fixed top-0 right-0 z-50 h-full w-80 bg-slate-800 shadow-2xl transform transition-transform duration-300'>
+							
 						<div className='p-4'>
 							{/* Header */}
 							<div className='flex items-center justify-between mb-6'>
