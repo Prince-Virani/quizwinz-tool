@@ -447,7 +447,9 @@ export default function HomePage() {
 
 
 				</div>
-				<AdSenseBanner />
+				
+			</header>
+			<AdSenseBanner />
 				<label style={{
 					display: 'block',
 					margin: '0px auto',
@@ -459,7 +461,6 @@ export default function HomePage() {
 				}}>
 					ADVERTISEMENT
 				</label>
-			</header>
 
 			{/* Slide-out Menu */}
 			{showMenu && (
