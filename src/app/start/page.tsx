@@ -444,19 +444,21 @@ export default function HomePage() {
 							{coins}
 						</span>
 					</div>
-					<AdSenseBanner />
-		<label style={{
-  display: 'block',
-  margin: '0px auto',
-  width: 'fit-content',
-  letterSpacing: '4px',
-  color: 'rgb(65, 77, 101)',
-  font: '400 9px / 2 Arial, sans-serif',
-  opacity: 0.7
-}}>
-  ADVERTISEMENT
-</label>
+
+
 				</div>
+				<AdSenseBanner />
+				<label style={{
+					display: 'block',
+					margin: '0px auto',
+					width: 'fit-content',
+					letterSpacing: '4px',
+					color: 'rgb(65, 77, 101)',
+					font: '400 9px / 2 Arial, sans-serif',
+					opacity: 0.7
+				}}>
+					ADVERTISEMENT
+				</label>
 			</header>
 
 			{/* Slide-out Menu */}
@@ -467,7 +469,7 @@ export default function HomePage() {
 						onClick={() => setShowMenu(false)}
 					/>
 					<div className='fixed top-0 right-0 z-50 h-full w-80 bg-slate-800 shadow-2xl transform transition-transform duration-300'>
-							
+
 						<div className='p-4'>
 							{/* Header */}
 							<div className='flex items-center justify-between mb-6'>
@@ -617,11 +619,10 @@ export default function HomePage() {
 							<button
 								key={category}
 								onClick={() => setSelectedCategory(category)}
-								className={`category-chip whitespace-nowrap ${
-									selectedCategory === category
+								className={`category-chip whitespace-nowrap ${selectedCategory === category
 										? "active"
 										: ""
-								}`}>
+									}`}>
 								{category}
 							</button>
 						))}
