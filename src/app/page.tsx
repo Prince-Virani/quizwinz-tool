@@ -226,7 +226,9 @@ export default function WelcomePage() {
 
 	return (
 		<div className='min-h-screen flex items-center justify-center p-4 bg-slate-900'>
-			<AdSenseBanner />
+					<Card className='w-full max-w-md bg-slate-800 border-slate-700'>
+				<CardContent className='p-6'>
+						<AdSenseBanner />
 		<label style={{
   display: 'block',
   margin: '0px auto',
@@ -237,8 +239,7 @@ export default function WelcomePage() {
   opacity: 0.7
 }}>
   ADVERTISEMENT
-</label>			<Card className='w-full max-w-md bg-slate-800 border-slate-700'>
-				<CardContent className='p-6'>
+</label>
 					{/* Header */}
 					
 					<div className='text-center mb-6'>
