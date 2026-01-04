@@ -7,27 +7,27 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
 	title: {
-		default: "Yaem2022 Quiz - Play and Win Rewards",
-		template: "%s | Yaem2022 Quiz",
+		default: "coinmoro Quiz - Play and Win Rewards",
+		template: "%s | coinmoro Quiz",
 	},
 	description:
 		"Play engaging quizzes and earn reward coins. Test your knowledge and win exciting prizes with Quizwinz.",
 	keywords:
 		"quiz, rewards, play, win, quizzes, knowledge, games, online quizzes",
-	authors: [{ name: "Yaem2022 Quiz" }],
-	creator: "Yaem2022 Quiz",
+	authors: [{ name: "coinmoro Quiz" }],
+	creator: "coinmoro Quiz",
 	openGraph: {
-		title: "Yaem2022 Quiz - Play and Win Rewards",
+		title: "coinmoro Quiz - Play and Win Rewards",
 		description:
 			"Play engaging quizzes and earn reward coins. Test your knowledge and win exciting prizes with Quizwinz.",
-		url: "https://quiz.yaem2022.org/",
-		siteName: "Yaem2022 Quiz",
+		url: "https://quiz1.coinmoro.com/",
+		siteName: "coinmoro Quiz",
 		images: [
 			{
-				url: "https://quiz.yaem2022.org/og-image.png",
+				url: "https://quiz1.coinmoro.com/og-image.png",
 				width: 1200,
 				height: 630,
-				alt: "Yaem2022 Quiz Logo",
+				alt: "coinmoro Quiz Logo",
 			},
 		],
 		locale: "en_US",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 		},
 	},
 	alternates: {
-		canonical: "https://quiz.yaem2022.org",
+		canonical: "https://quiz1.coinmoro.com",
 	},
 };
 
@@ -80,9 +80,9 @@ export default function RootLayout({
 				<script
 					async
 					crossOrigin='anonymous'
-					src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5607455208212717'
+					src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4752801785953456'
 				/>
-				<meta name='application-name' content='Yaem2022 Quiz' />
+				<meta name='application-name' content='coinmoro Quiz' />
 				<meta name='format-detection' content='telephone=no' />
 				<meta name='theme-color' content='#000000' />
 				<link rel='shortcut icon' href='/favicon.ico' />

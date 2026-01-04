@@ -33,7 +33,7 @@ export default function PrivacyPage() {
 								Information We Collect
 							</h3>
 							<p>
-								Yaem2022 Quiz is designed to work without requiring
+								coinmoro Quiz is designed to work without requiring
 								personal information. We only collect:
 							</p>
 							<ul className='list-disc list-inside space-y-1 mt-2'>

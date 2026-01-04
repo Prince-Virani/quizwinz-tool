@@ -25,8 +25,8 @@ export default function AdSenseBanner() {
     <div className="w-full my-4 min-h-[90px]">
       <ins
         className="adsbygoogle block"
-        data-ad-client="ca-pub-5607455208212717"
-        data-ad-slot="5400566062"
+        data-ad-client="ca-pub-4752801785953456"
+        data-ad-slot="9061097133"
         data-ad-format="auto"
         data-full-width-responsive="true"
       />
