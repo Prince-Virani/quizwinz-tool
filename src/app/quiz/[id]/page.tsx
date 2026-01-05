@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, XCircle, Coins, ArrowLeft, Clock } from "lucide-react"
+import AdSenseBanner from "@/components/adSenseBanner"
 
 // Sample quiz questions - in a real app, this would come from an API
 const quizQuestions = {
@@ -211,7 +212,7 @@ export default function QuizPage() {
     const currentCoins = Number.parseInt(localStorage.getItem("quizwinz-coins") || "0")
     localStorage.setItem("quizwinz-coins", (currentCoins + totalReward).toString())
 
-    router.push("/home")
+    router.push("/result")
   }
 
   if (quizCompleted) {
@@ -261,7 +262,26 @@ export default function QuizPage() {
   const isCorrect = selectedAnswer === question.correct
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-900">
+    // 1. Added 'flex-col' to stack the Ad and Card vertically
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-slate-900">
+      
+      {/* 2. Ad Container: Matches card width (max-w-md) and adds bottom margin (mb-6) */}
+      <div className="w-full max-w-md mb-6 flex flex-col items-center">
+        <AdSenseBanner />
+        <label style={{
+          display: 'block',
+          marginTop: '8px', // Added a little space between banner and text
+          width: 'fit-content',
+          letterSpacing: '4px',
+          color: 'rgb(65, 77, 101)',
+          font: '400 9px / 2 Arial, sans-serif',
+          opacity: 0.7
+        }}>
+          ADVERTISEMENT
+        </label>
+      </div>
+
+      {/* Main Quiz Card */}
       <Card className="w-full max-w-md bg-slate-800 border-slate-700">
         <CardContent className="p-6">
           {/* Header */}

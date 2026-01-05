@@ -435,7 +435,7 @@ export default function HomePage() {
 					</button>
 
 					<h1 className='text-xl font-bold text-orange-400'>
-						coinmoro Quiz
+						Coinmoro Quiz
 					</h1>
 
 					<div className='flex items-center gap-2 bg-slate-800 px-3 py-2 rounded-full'>
