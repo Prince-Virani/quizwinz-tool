@@ -27,7 +27,7 @@ const categories = [
 	"MATH AND LOGIC",
 	"ENTERTAINMENT",
 	"SCIENCE",
-	"HISTORY",
+	"LITERATURE",
 	"BUSINESS",
 ];
 
@@ -37,7 +37,7 @@ const quizzes = [
 		title: "Business And Economics | Companies",
 		subtitle: "Play and Win 2000",
 		entryFee: 100,
-		category: "BUSINESS AND ECONOMICS",
+		category: "BUSINESS",
 		icon: "📊",
 	},
 	{
@@ -45,7 +45,7 @@ const quizzes = [
 		title: "Travel | World Capitals",
 		subtitle: "Play and Win 2000",
 		entryFee: 100,
-		category: "GEOGRAPHY",
+		category: "WORLD",
 		icon: "🌍",
 	},
 	{
@@ -53,7 +53,7 @@ const quizzes = [
 		title: "Math And Logic | Puzzles",
 		subtitle: "Play and Win 2000",
 		entryFee: 100,
-		category: "MATHEMATICS",
+		category: "MATH AND LOGIC",
 		icon: "🧮",
 	},
 	{
@@ -69,7 +69,7 @@ const quizzes = [
 		title: "Math And Logic | Logical Reasoning",
 		subtitle: "Play and Win 2000",
 		entryFee: 100,
-		category: "MATHEMATICS",
+		category: "MATH AND LOGIC",
 		icon: "🧠",
 	},
 	{
@@ -77,7 +77,7 @@ const quizzes = [
 		title: "Travel | Tourist Attractions",
 		subtitle: "Play and Win 2000",
 		entryFee: 100,
-		category: "GEOGRAPHY",
+		category: "WORLD",
 		icon: "🗺️",
 	},
 	{
@@ -85,7 +85,7 @@ const quizzes = [
 		title: "Math And Logic | Algebra",
 		subtitle: "Play and Win 2000",
 		entryFee: 100,
-		category: "MATHEMATICS",
+		category: "MATH AND LOGIC",
 		icon: "📐",
 	},
 	{
@@ -93,7 +93,7 @@ const quizzes = [
 		title: "World | Famous Landmarks",
 		subtitle: "Play and Win 2000",
 		entryFee: 100,
-		category: "GEOGRAPHY",
+		category: "WORLD",
 		icon: "🏛️",
 	},
 	{
@@ -101,7 +101,7 @@ const quizzes = [
 		title: "Science | Physics Basics",
 		subtitle: "Play and Win 1500",
 		entryFee: 75,
-		category: "SCIENCE AND TECHNOLOGY",
+		category: "SCIENCE",
 		icon: "⚛️",
 	},
 	{
@@ -133,7 +133,7 @@ const quizzes = [
 		title: "Technology | Programming",
 		subtitle: "Play and Win 2500",
 		entryFee: 125,
-		category: "SCIENCE AND TECHNOLOGY",
+		category: "SCIENCE",
 		icon: "💻",
 	},
 	{
@@ -149,7 +149,7 @@ const quizzes = [
 		title: "Geography | Countries & Flags",
 		subtitle: "Play and Win 1700",
 		entryFee: 85,
-		category: "GEOGRAPHY",
+		category: "WORLD",
 		icon: "🏳️",
 	},
 	{
@@ -157,7 +157,7 @@ const quizzes = [
 		title: "Business | Marketing Basics",
 		subtitle: "Play and Win 1900",
 		entryFee: 95,
-		category: "BUSINESS AND ECONOMICS",
+		category: "BUSINESS",
 		icon: "📈",
 	},
 	{
@@ -165,7 +165,7 @@ const quizzes = [
 		title: "Science | Chemistry",
 		subtitle: "Play and Win 2100",
 		entryFee: 105,
-		category: "SCIENCE AND TECHNOLOGY",
+		category: "SCIENCE",
 		icon: "🧪",
 	},
 	{
@@ -197,7 +197,7 @@ const quizzes = [
 		title: "Math | Geometry",
 		subtitle: "Play and Win 1800",
 		entryFee: 90,
-		category: "MATHEMATICS",
+		category: "MATH AND LOGIC",
 		icon: "📏",
 	},
 	{
@@ -205,7 +205,7 @@ const quizzes = [
 		title: "Technology | AI & Machine Learning",
 		subtitle: "Play and Win 2800",
 		entryFee: 140,
-		category: "SCIENCE AND TECHNOLOGY",
+		category: "SCIENCE",
 		icon: "🤖",
 	},
 	{
@@ -221,7 +221,7 @@ const quizzes = [
 		title: "Geography | Oceans & Seas",
 		subtitle: "Play and Win 1600",
 		entryFee: 80,
-		category: "GEOGRAPHY",
+		category: "WORLD",
 		icon: "🌊",
 	},
 	{
@@ -229,7 +229,7 @@ const quizzes = [
 		title: "Business | Finance",
 		subtitle: "Play and Win 2400",
 		entryFee: 120,
-		category: "BUSINESS AND ECONOMICS",
+		category: "BUSINESS",
 		icon: "💰",
 	},
 	{
@@ -237,7 +237,7 @@ const quizzes = [
 		title: "Science | Biology",
 		subtitle: "Play and Win 1900",
 		entryFee: 95,
-		category: "SCIENCE AND TECHNOLOGY",
+		category: "SCIENCE",
 		icon: "🔬",
 	},
 	{
@@ -269,7 +269,7 @@ const quizzes = [
 		title: "Math | Statistics",
 		subtitle: "Play and Win 1700",
 		entryFee: 85,
-		category: "MATHEMATICS",
+		category: "MATH AND LOGIC",
 		icon: "📊",
 	},
 	{
@@ -277,7 +277,7 @@ const quizzes = [
 		title: "Technology | Web Development",
 		subtitle: "Play and Win 2600",
 		entryFee: 130,
-		category: "SCIENCE AND TECHNOLOGY",
+		category: "SCIENCE",
 		icon: "🌐",
 	},
 	{
@@ -293,7 +293,7 @@ const quizzes = [
 		title: "Geography | Mountains",
 		subtitle: "Play and Win 1500",
 		entryFee: 75,
-		category: "GEOGRAPHY",
+		category: "WORLD",
 		icon: "⛰️",
 	},
 	{
@@ -301,7 +301,7 @@ const quizzes = [
 		title: "Business | Entrepreneurship",
 		subtitle: "Play and Win 2100",
 		entryFee: 105,
-		category: "BUSINESS AND ECONOMICS",
+		category: "BUSINESS",
 		icon: "🚀",
 	},
 	{
@@ -309,7 +309,7 @@ const quizzes = [
 		title: "Science | Astronomy",
 		subtitle: "Play and Win 2300",
 		entryFee: 115,
-		category: "SCIENCE AND TECHNOLOGY",
+		category: "SCIENCE",
 		icon: "🌟",
 	},
 	{
@@ -341,7 +341,7 @@ const quizzes = [
 		title: "Math | Calculus",
 		subtitle: "Play and Win 2500",
 		entryFee: 125,
-		category: "MATHEMATICS",
+		category: "MATH AND LOGIC",
 		icon: "∫",
 	},
 	{
@@ -349,7 +349,7 @@ const quizzes = [
 		title: "Technology | Cybersecurity",
 		subtitle: "Play and Win 2700",
 		entryFee: 135,
-		category: "SCIENCE AND TECHNOLOGY",
+		category: "SCIENCE",
 		icon: "🔒",
 	},
 	{
@@ -365,7 +365,7 @@ const quizzes = [
 		title: "Geography | Climate & Weather",
 		subtitle: "Play and Win 1800",
 		entryFee: 90,
-		category: "GEOGRAPHY",
+		category: "WORLD",
 		icon: "🌤️",
 	},
 ];
