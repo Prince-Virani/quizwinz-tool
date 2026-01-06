@@ -6,16 +6,21 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, XCircle, Coins, ArrowLeft, Clock, AlertTriangle } from "lucide-react"
 import AdSenseBanner from "@/components/adSenseBanner"
-import { allQuizQuestions } from "@/app/data/quizData" // Make sure this path is correct
+import { allQuizQuestions, Question } from "@/app/data/quizData" // Ensure Question type is imported if exported, otherwise remove Question type annotation
 
 export default function QuizPage() {
   const params = useParams()
   const router = useRouter()
   const quizId = Number.parseInt(params.id as string)
 
-  // ------------------------------------------
-  // 1. ALL HOOKS (useState) GO FIRST
-  // ------------------------------------------
+  // 1. Retrieve the full list of questions for this category
+  const fullQuestionList = allQuizQuestions[quizId];
+
+  // 2. Define State for the "Active" 10 questions
+  const [questions, setQuestions] = useState<any[]>([]); // Using 'any[]' or 'Question[]' if you imported the interface
+  const [loading, setLoading] = useState(true);
+
+  // Standard Game State
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [answers, setAnswers] = useState<number[]>([])
@@ -24,31 +29,35 @@ export default function QuizPage() {
   const [timeLeft, setTimeLeft] = useState(30)
   const [timerActive, setTimerActive] = useState(true)
 
-  // Get data
-  const questions = allQuizQuestions[quizId];
-
-  // ------------------------------------------
-  // 2. USEEFFECT GOES HERE (Before any returns!)
-  // ------------------------------------------
+  // 3. EFFECT: Shuffle and Slice 10 Questions on Mount
   useEffect(() => {
-    // Only run timer if we actually have questions and the quiz isn't done
-    if (questions && questions.length > 0) {
+    if (fullQuestionList && fullQuestionList.length > 0) {
+      // Create a copy and shuffle
+      const shuffled = [...fullQuestionList].sort(() => 0.5 - Math.random());
+      // Take only the first 10
+      const selected = shuffled.slice(0, 10);
+      setQuestions(selected);
+      setLoading(false);
+    } else {
+      setLoading(false); // Stop loading even if no questions found (to show error screen)
+    }
+  }, [fullQuestionList]);
+
+  // 4. EFFECT: Timer Logic
+  useEffect(() => {
+    if (!loading && questions.length > 0) { // Only run timer if questions are loaded
         if (timerActive && timeLeft > 0 && !showResult) {
-        const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
-        return () => clearTimeout(timer)
+            const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
+            return () => clearTimeout(timer)
         } else if (timeLeft === 0 && !showResult) {
-        handleAnswerSelect(-1)
+            handleAnswerSelect(-1)
         }
     }
-  }, [timeLeft, timerActive, showResult, questions]) // Added questions to dependency
+  }, [timeLeft, timerActive, showResult, loading, questions])
 
-  // ------------------------------------------
-  // 3. NOW YOU CAN DO SAFETY CHECKS & RETURNS
-  // ------------------------------------------
-  
-  // Helper function must be defined before it's used
+  // 5. HELPER: Answer Selection
   const handleAnswerSelect = (answerIndex: number) => {
-    if (!questions) return; // Safety check inside function
+    if (loading || questions.length === 0) return;
 
     if (!showResult) {
       setSelectedAnswer(answerIndex)
@@ -72,9 +81,8 @@ export default function QuizPage() {
     }
   }
 
+  // 6. HELPER: Complete Quiz
   const handleQuizComplete = () => {
-    if (!questions) return; 
-
     const correctAnswers = answers.filter((answer, index) => answer === questions[index].correct).length
     const baseReward = 200
     const bonusPerCorrect = 100
@@ -86,7 +94,12 @@ export default function QuizPage() {
     router.push("/result")
   }
 
-  // --- CHECK 1: Do questions exist? ---
+  // --- VIEW 1: Loading State ---
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">Loading Quiz...</div>;
+  }
+
+  // --- VIEW 2: Data Missing (Under Construction) ---
   if (!questions || questions.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white flex-col gap-4">
@@ -98,7 +111,7 @@ export default function QuizPage() {
     );
   }
 
-  // --- CHECK 2: Is quiz done? ---
+  // --- VIEW 3: Quiz Completed ---
   if (quizCompleted) {
     const correctAnswers = answers.filter((answer, index) => answer === questions[index].correct).length
     const baseReward = 200
@@ -142,8 +155,11 @@ export default function QuizPage() {
     )
   }
 
-  // --- MAIN RENDER ---
+  // --- VIEW 4: Main Quiz Game ---
   const question = questions[currentQuestion]
+  // Safety check in case index is out of bounds
+  if (!question) return <div>Error loading question</div>;
+  
   const isCorrect = selectedAnswer === question.correct
 
   return (
@@ -201,7 +217,7 @@ export default function QuizPage() {
 
           {/* Options */}
           <div className="grid grid-cols-2 gap-3 mb-6">
-            {question.options.map((option, index) => (
+            {question.options.map((option: string, index: number) => (
               <button
                 key={index}
                 onClick={() => handleAnswerSelect(index)}
