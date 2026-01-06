@@ -6,16 +6,16 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, XCircle, Coins, ArrowLeft, Clock, AlertTriangle } from "lucide-react"
 import AdSenseBanner from "@/components/adSenseBanner"
-// IMPORT THE DATA HERE
-import { allQuizQuestions } from "@/app/data/quizData" 
+import { allQuizQuestions } from "@/app/data/quizData" // Make sure this path is correct
 
 export default function QuizPage() {
   const params = useParams()
   const router = useRouter()
-  
-  // Get the ID from the URL (e.g., /quiz/1)
   const quizId = Number.parseInt(params.id as string)
 
+  // ------------------------------------------
+  // 1. ALL HOOKS (useState) GO FIRST
+  // ------------------------------------------
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [answers, setAnswers] = useState<number[]>([])
@@ -24,32 +24,32 @@ export default function QuizPage() {
   const [timeLeft, setTimeLeft] = useState(30)
   const [timerActive, setTimerActive] = useState(true)
 
-  // FETCH QUESTIONS BASED ON ID
-  // If the ID doesn't exist in your data file, this returns undefined
+  // Get data
   const questions = allQuizQuestions[quizId];
 
-  // --- SAFETY CHECK: If questions for this ID don't exist yet ---
-  if (!questions || questions.length === 0) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white flex-col gap-4">
-        <AlertTriangle className="w-12 h-12 text-yellow-500" />
-        <h2 className="text-xl font-bold">Quiz Under Construction</h2>
-        <p className="text-slate-400">Questions for this category (ID: {quizId}) are coming soon!</p>
-        <Button onClick={() => router.back()} variant="secondary">Go Back</Button>
-      </div>
-    );
-  }
-
+  // ------------------------------------------
+  // 2. USEEFFECT GOES HERE (Before any returns!)
+  // ------------------------------------------
   useEffect(() => {
-    if (timerActive && timeLeft > 0 && !showResult) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
-      return () => clearTimeout(timer)
-    } else if (timeLeft === 0 && !showResult) {
-      handleAnswerSelect(-1) // Auto-submit with no answer
+    // Only run timer if we actually have questions and the quiz isn't done
+    if (questions && questions.length > 0) {
+        if (timerActive && timeLeft > 0 && !showResult) {
+        const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
+        return () => clearTimeout(timer)
+        } else if (timeLeft === 0 && !showResult) {
+        handleAnswerSelect(-1)
+        }
     }
-  }, [timeLeft, timerActive, showResult])
+  }, [timeLeft, timerActive, showResult, questions]) // Added questions to dependency
 
+  // ------------------------------------------
+  // 3. NOW YOU CAN DO SAFETY CHECKS & RETURNS
+  // ------------------------------------------
+  
+  // Helper function must be defined before it's used
   const handleAnswerSelect = (answerIndex: number) => {
+    if (!questions) return; // Safety check inside function
+
     if (!showResult) {
       setSelectedAnswer(answerIndex)
       setShowResult(true)
@@ -73,8 +73,9 @@ export default function QuizPage() {
   }
 
   const handleQuizComplete = () => {
-    const correctAnswers = answers.filter((answer, index) => answer === questions[index].correct).length
+    if (!questions) return; 
 
+    const correctAnswers = answers.filter((answer, index) => answer === questions[index].correct).length
     const baseReward = 200
     const bonusPerCorrect = 100
     const totalReward = baseReward + correctAnswers * bonusPerCorrect
@@ -85,6 +86,19 @@ export default function QuizPage() {
     router.push("/result")
   }
 
+  // --- CHECK 1: Do questions exist? ---
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white flex-col gap-4">
+        <AlertTriangle className="w-12 h-12 text-yellow-500" />
+        <h2 className="text-xl font-bold">Quiz Under Construction</h2>
+        <p className="text-slate-400">Questions for this category (ID: {quizId}) are coming soon!</p>
+        <Button onClick={() => router.back()} variant="secondary">Go Back</Button>
+      </div>
+    );
+  }
+
+  // --- CHECK 2: Is quiz done? ---
   if (quizCompleted) {
     const correctAnswers = answers.filter((answer, index) => answer === questions[index].correct).length
     const baseReward = 200
@@ -128,6 +142,7 @@ export default function QuizPage() {
     )
   }
 
+  // --- MAIN RENDER ---
   const question = questions[currentQuestion]
   const isCorrect = selectedAnswer === question.correct
 
