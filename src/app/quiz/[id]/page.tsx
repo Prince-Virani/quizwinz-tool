@@ -4,160 +4,16 @@ import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { CheckCircle, XCircle, Coins, ArrowLeft, Clock } from "lucide-react"
+import { CheckCircle, XCircle, Coins, ArrowLeft, Clock, AlertTriangle } from "lucide-react"
 import AdSenseBanner from "@/components/adSenseBanner"
-
-// Sample quiz questions - in a real app, this would come from an API
-const quizQuestions = {
-  1: [
-    {
-      question: "Which company was founded by Bill Gates?",
-      options: ["Apple", "Microsoft", "Google", "Amazon"],
-      correct: 1,
-      funFact: "Microsoft was founded by Bill Gates and Paul Allen in 1975, starting the personal computer revolution.",
-    },
-    {
-      question: "What does GDP stand for?",
-      options: [
-        "Gross Domestic Product",
-        "General Data Protection",
-        "Global Development Program",
-        "Government Debt Policy",
-      ],
-      correct: 0,
-      funFact: "GDP measures the total value of goods and services produced within a country's borders.",
-    },
-    {
-      question: "Which company owns Instagram?",
-      options: ["Twitter", "Google", "Meta (Facebook)", "Snapchat"],
-      correct: 2,
-      funFact: "Facebook (now Meta) acquired Instagram for $1 billion in 2012, one of the biggest tech acquisitions.",
-    },
-    {
-      question: "What is the currency of Japan?",
-      options: ["Yuan", "Won", "Yen", "Rupee"],
-      correct: 2,
-      funFact:
-        "The Japanese Yen is one of the most traded currencies in the world and is considered a safe haven currency.",
-    },
-    {
-      question: "Which company is known for the iPhone?",
-      options: ["Samsung", "Apple", "Google", "Microsoft"],
-      correct: 1,
-      funFact: "Apple launched the first iPhone in 2007, revolutionizing the smartphone industry.",
-    },
-    {
-      question: "What does CEO stand for?",
-      options: [
-        "Chief Executive Officer",
-        "Central Executive Officer",
-        "Corporate Executive Officer",
-        "Chief Economic Officer",
-      ],
-      correct: 0,
-      funFact:
-        "The CEO is typically the highest-ranking executive in a company, responsible for major corporate decisions.",
-    },
-    {
-      question: "Which company developed Android?",
-      options: ["Apple", "Microsoft", "Google", "Samsung"],
-      correct: 2,
-      funFact: "Google acquired Android Inc. in 2005 and launched the first Android phone in 2008.",
-    },
-    {
-      question: "What is the stock market index for the US?",
-      options: ["FTSE", "Nikkei", "DAX", "S&P 500"],
-      correct: 3,
-      funFact: "The S&P 500 tracks 500 of the largest publicly traded companies in the United States.",
-    },
-    {
-      question: "Which company owns LinkedIn?",
-      options: ["Google", "Microsoft", "Facebook", "Twitter"],
-      correct: 1,
-      funFact: "Microsoft acquired LinkedIn for $26.2 billion in 2016, their largest acquisition at the time.",
-    },
-    {
-      question: "What does IPO stand for?",
-      options: [
-        "Initial Public Offering",
-        "International Public Offering",
-        "Internal Public Offering",
-        "Initial Private Offering",
-      ],
-      correct: 0,
-      funFact: "An IPO is when a private company offers shares to the public for the first time on a stock exchange.",
-    },
-  ],
-  2: [
-    {
-      question: "What is the capital of Australia?",
-      options: ["Sydney", "Melbourne", "Canberra", "Perth"],
-      correct: 2,
-      funFact:
-        "Canberra was specially built to be Australia's capital city, chosen as a compromise between Sydney and Melbourne.",
-    },
-    {
-      question: "Which country has the most time zones?",
-      options: ["Russia", "USA", "China", "Canada"],
-      correct: 0,
-      funFact: "Russia spans 11 time zones, making it the country with the most time zones in the world.",
-    },
-    {
-      question: "What is the capital of Brazil?",
-      options: ["Rio de Janeiro", "São Paulo", "Brasília", "Salvador"],
-      correct: 2,
-      funFact: "Brasília was built from scratch in the 1950s to be Brazil's new capital, replacing Rio de Janeiro.",
-    },
-    {
-      question: "Which city is known as the Big Apple?",
-      options: ["Los Angeles", "Chicago", "New York", "Boston"],
-      correct: 2,
-      funFact: "New York City got the nickname 'Big Apple' from jazz musicians in the 1930s.",
-    },
-    {
-      question: "What is the smallest country in the world?",
-      options: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"],
-      correct: 1,
-      funFact: "Vatican City is only 0.17 square miles (0.44 square kilometers) in area.",
-    },
-    {
-      question: "Which river is the longest in the world?",
-      options: ["Amazon", "Nile", "Yangtze", "Mississippi"],
-      correct: 1,
-      funFact: "The Nile River flows for about 4,135 miles (6,650 kilometers) through northeastern Africa.",
-    },
-    {
-      question: "What is the highest mountain in the world?",
-      options: ["K2", "Mount Everest", "Kangchenjunga", "Lhotse"],
-      correct: 1,
-      funFact: "Mount Everest stands at 29,032 feet (8,849 meters) above sea level.",
-    },
-    {
-      question: "Which desert is the largest in the world?",
-      options: ["Sahara", "Gobi", "Antarctica", "Arabian"],
-      correct: 2,
-      funFact:
-        "Antarctica is technically the world's largest desert, as deserts are defined by low precipitation, not temperature.",
-    },
-    {
-      question: "What is the most spoken language in the world?",
-      options: ["English", "Mandarin Chinese", "Spanish", "Hindi"],
-      correct: 1,
-      funFact: "Mandarin Chinese is spoken by over 900 million people as their first language.",
-    },
-    {
-      question: "Which ocean is the largest?",
-      options: ["Atlantic", "Indian", "Arctic", "Pacific"],
-      correct: 3,
-      funFact:
-        "The Pacific Ocean covers about 46% of the world's water surface and about one-third of the total surface area.",
-    },
-  ],
-}
+// IMPORT THE DATA HERE
+import { allQuizQuestions } from "@/app/data/quizData" 
 
 export default function QuizPage() {
   const params = useParams()
   const router = useRouter()
+  
+  // Get the ID from the URL (e.g., /quiz/1)
   const quizId = Number.parseInt(params.id as string)
 
   const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -168,7 +24,21 @@ export default function QuizPage() {
   const [timeLeft, setTimeLeft] = useState(30)
   const [timerActive, setTimerActive] = useState(true)
 
-  const questions = quizQuestions[quizId as keyof typeof quizQuestions] || quizQuestions[1]
+  // FETCH QUESTIONS BASED ON ID
+  // If the ID doesn't exist in your data file, this returns undefined
+  const questions = allQuizQuestions[quizId];
+
+  // --- SAFETY CHECK: If questions for this ID don't exist yet ---
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white flex-col gap-4">
+        <AlertTriangle className="w-12 h-12 text-yellow-500" />
+        <h2 className="text-xl font-bold">Quiz Under Construction</h2>
+        <p className="text-slate-400">Questions for this category (ID: {quizId}) are coming soon!</p>
+        <Button onClick={() => router.back()} variant="secondary">Go Back</Button>
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (timerActive && timeLeft > 0 && !showResult) {
@@ -262,15 +132,13 @@ export default function QuizPage() {
   const isCorrect = selectedAnswer === question.correct
 
   return (
-    // 1. Added 'flex-col' to stack the Ad and Card vertically
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-slate-900">
       
-      {/* 2. Ad Container: Matches card width (max-w-md) and adds bottom margin (mb-6) */}
       <div className="w-full max-w-md mb-6 flex flex-col items-center">
         <AdSenseBanner />
         <label style={{
           display: 'block',
-          marginTop: '8px', // Added a little space between banner and text
+          marginTop: '8px',
           width: 'fit-content',
           letterSpacing: '4px',
           color: 'rgb(65, 77, 101)',
@@ -281,7 +149,6 @@ export default function QuizPage() {
         </label>
       </div>
 
-      {/* Main Quiz Card */}
       <Card className="w-full max-w-md bg-slate-800 border-slate-700">
         <CardContent className="p-6">
           {/* Header */}

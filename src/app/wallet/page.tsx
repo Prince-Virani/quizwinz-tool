@@ -141,7 +141,7 @@ export default function WalletPage() {
 				{/* Action Buttons */}
 				<div className='mt-6 space-y-3'>
 					<Button
-						onClick={() => router.push("/home")}
+						onClick={() => router.push("/start")}
 						className='w-full bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 hover:from-orange-500 hover:to-yellow-600'>
 						Play More Quizzes
 					</Button>
