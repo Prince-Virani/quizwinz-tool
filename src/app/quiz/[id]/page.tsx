@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, XCircle, Coins, ArrowLeft, Clock, AlertTriangle } from "lucide-react"
 import AdSenseBanner from "@/components/adSenseBanner"
-import { allQuizQuestions, Question } from "@/app/data/quizData" // Ensure Question type is imported if exported, otherwise remove Question type annotation
+import { allQuizQuestions, Question } from "@/app/data/quizData"
 
 export default function QuizPage() {
   const params = useParams()
@@ -17,7 +17,8 @@ export default function QuizPage() {
   const fullQuestionList = allQuizQuestions[quizId];
 
   // 2. Define State for the "Active" 10 questions
-  const [questions, setQuestions] = useState<any[]>([]); // Using 'any[]' or 'Question[]' if you imported the interface
+  // FIX: Changed <any[]> to <Question[]> to fix the "Unexpected any" error
+  const [questions, setQuestions] = useState<Question[]>([]); 
   const [loading, setLoading] = useState(true);
 
   // Standard Game State
@@ -39,24 +40,13 @@ export default function QuizPage() {
       setQuestions(selected);
       setLoading(false);
     } else {
-      setLoading(false); // Stop loading even if no questions found (to show error screen)
+      setLoading(false); 
     }
   }, [fullQuestionList]);
 
-  // 4. EFFECT: Timer Logic
-  useEffect(() => {
-    if (!loading && questions.length > 0) { // Only run timer if questions are loaded
-        if (timerActive && timeLeft > 0 && !showResult) {
-            const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
-            return () => clearTimeout(timer)
-        } else if (timeLeft === 0 && !showResult) {
-            handleAnswerSelect(-1)
-        }
-    }
-  }, [timeLeft, timerActive, showResult, loading, questions])
-
-  // 5. HELPER: Answer Selection
-  const handleAnswerSelect = (answerIndex: number) => {
+  // 4. HELPER: Answer Selection
+  // FIX: Wrapped in useCallback to fix the "useEffect missing dependency" warning
+  const handleAnswerSelect = useCallback((answerIndex: number) => {
     if (loading || questions.length === 0) return;
 
     if (!showResult) {
@@ -65,11 +55,11 @@ export default function QuizPage() {
       setTimerActive(false)
 
       setTimeout(() => {
-        const newAnswers = [...answers, answerIndex]
-        setAnswers(newAnswers)
+        // Use functional state update to ensure we have the latest answers
+        setAnswers(prev => [...prev, answerIndex])
 
         if (currentQuestion < questions.length - 1) {
-          setCurrentQuestion(currentQuestion + 1)
+          setCurrentQuestion(prev => prev + 1)
           setSelectedAnswer(null)
           setShowResult(false)
           setTimeLeft(30)
@@ -79,7 +69,19 @@ export default function QuizPage() {
         }
       }, 2500)
     }
-  }
+  }, [loading, questions, showResult, currentQuestion]);
+
+  // 5. EFFECT: Timer Logic
+  useEffect(() => {
+    if (!loading && questions.length > 0) { 
+        if (timerActive && timeLeft > 0 && !showResult) {
+            const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
+            return () => clearTimeout(timer)
+        } else if (timeLeft === 0 && !showResult) {
+            handleAnswerSelect(-1)
+        }
+    }
+  }, [timeLeft, timerActive, showResult, loading, questions, handleAnswerSelect])
 
   // 6. HELPER: Complete Quiz
   const handleQuizComplete = () => {
