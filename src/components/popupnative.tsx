@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 // Declare global window type for adsbygoogle
 declare global {
   interface Window {
+    googletag: any;
     adsbygoogle: unknown[];
   }
 }
@@ -35,40 +36,40 @@ export default function Popupnative() {
   );
 }
   */
- export default function Popupnative() {
-   const adSlotRef = useRef<any>(null);
- 
-   useEffect(() => {
-     if (typeof window !== "undefined") {
-       const { googletag } = window;
- 
-       googletag.cmd.push(() => {
-         // destroy old slot if it exists (for navigation safety)
-         if (adSlotRef.current) {
-           googletag.destroySlots([adSlotRef.current]);
-         }
- 
-         // Define the slot with "fluid" size
-         // This tells Ad Manager to fit the container width
-         adSlotRef.current = googletag.defineSlot(
-           '/23287200353/quiz1popup', 
-           ['fluid'], // <--- CHANGED FROM [300, 250] to ['fluid']
-           'div-gpt-ad-1767851436902-0'
-         );
- 
-         if (adSlotRef.current) {
-            adSlotRef.current.addService(googletag.pubads());
-            googletag.enableServices();
-            googletag.display('div-gpt-ad-1767851436902-0');
-         }
-       });
-     }
-   }, []);
- 
-   return (
-     // Container width controls the ad width
-     <div className="w-full my-4"> 
-       <div id="div-gpt-ad-1767851436902-0"></div>
-     </div>
-   );
- }
+export default function AdSenseBanner() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const adSlotRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const { googletag } = window;
+
+      googletag.cmd.push(() => {
+        // Destroy old slot if it exists (prevents duplicate slot errors on navigation)
+        if (adSlotRef.current) {
+          googletag.destroySlots([adSlotRef.current]);
+        }
+
+        // Define the slot with "fluid" size
+        adSlotRef.current = googletag.defineSlot(
+          '/23287200353/quiz1popup', 
+          ['fluid'], 
+          'div-gpt-ad-1767851436902-0'
+        );
+
+        if (adSlotRef.current) {
+           adSlotRef.current.addService(googletag.pubads());
+           googletag.enableServices();
+           googletag.display('div-gpt-ad-1767851436902-0');
+        }
+      });
+    }
+  }, []);
+
+  return (
+    // Container width controls the ad width
+    <div className="w-full my-4"> 
+      <div id="div-gpt-ad-1767851347418-0"></div>
+    </div>
+  );
+}

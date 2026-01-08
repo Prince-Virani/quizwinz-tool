@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 // Declare global window type for adsbygoogle
 declare global {
   interface Window {
+    googletag: any;
     adsbygoogle: unknown[];
     }
 }
@@ -36,7 +37,7 @@ export default function AdSenseBanner() {
 }
   */
 export default function AdSenseBanner() {
-  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const adSlotRef = useRef<any>(null);
 
   useEffect(() => {
@@ -44,16 +45,15 @@ export default function AdSenseBanner() {
       const { googletag } = window;
 
       googletag.cmd.push(() => {
-        // destroy old slot if it exists (for navigation safety)
+        // Destroy old slot if it exists (prevents duplicate slot errors on navigation)
         if (adSlotRef.current) {
           googletag.destroySlots([adSlotRef.current]);
         }
 
         // Define the slot with "fluid" size
-        // This tells Ad Manager to fit the container width
         adSlotRef.current = googletag.defineSlot(
           '/23287200353/quiz1native', 
-          ['fluid'], // <--- CHANGED FROM [300, 250] to ['fluid']
+          ['fluid'], 
           'div-gpt-ad-1767851347418-0'
         );
 
