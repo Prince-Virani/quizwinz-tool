@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, XCircle } from "lucide-react";
 import AdSenseBanner from "@/components/adSenseBanner";
+import DialogAd from "@/components/DialogAd";
 
 const demoQuestions = [
 	{
@@ -127,21 +128,32 @@ function getRandomQuestions(arr: typeof demoQuestions, n: number) {
 }
 
 export default function WelcomePage() {
-	const [randomQuestions, setRandomQuestions] = useState(
-		demoQuestions.slice(0, 2)
-	);
+	const [randomQuestions, setRandomQuestions] = useState(demoQuestions.slice(0, 2));
 	const [currentQuestion, setCurrentQuestion] = useState(0);
 	const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 	const [showResult, setShowResult] = useState(false);
 	const [answers, setAnswers] = useState<number[]>([]);
 	const [showReward, setShowReward] = useState(false);
+    
+    // 2. ADD STATE FOR THE POPUP AD
+    const [isAdOpen, setIsAdOpen] = useState(false);
+
 	const router = useRouter();
 
 	useEffect(() => {
 		setRandomQuestions(getRandomQuestions(demoQuestions, 2));
+        
+        // 3. TRIGGER AD ON PAGE LOAD
+        // We use a small timeout (e.g., 1s) so the user sees the page first, then the ad pops up.
+        const adTimer = setTimeout(() => {
+            setIsAdOpen(true);
+        }, 1000);
+
+        return () => clearTimeout(adTimer);
 	}, []);
 
-	const handleAnswerSelect = (answerIndex: number) => {
+	// ... rest of your existing functions (handleAnswerSelect, handleContinue) ...
+    const handleAnswerSelect = (answerIndex: number) => {
 		if (!showResult) {
 			setSelectedAnswer(answerIndex);
 			setShowResult(true);
@@ -155,22 +167,13 @@ export default function WelcomePage() {
 					setSelectedAnswer(null);
 					setShowResult(false);
 				} else {
-					// Calculate reward
+					// Reward logic
 					const correctAnswers = newAnswers.filter(
-						(answer, index) =>
-							answer === randomQuestions[index].correct
+						(answer, index) => answer === randomQuestions[index].correct
 					).length;
 					const reward = correctAnswers * 100 + 100;
-
-					// Save initial coins
-					const currentCoins = Number.parseInt(
-						localStorage.getItem("quizwinz-coins") || "0"
-					);
-					localStorage.setItem(
-						"quizwinz-coins",
-						(currentCoins + reward).toString()
-					);
-
+					const currentCoins = Number.parseInt(localStorage.getItem("quizwinz-coins") || "0");
+					localStorage.setItem("quizwinz-coins", (currentCoins + reward).toString());
 					setShowReward(true);
 				}
 			}, 2000);
@@ -181,38 +184,21 @@ export default function WelcomePage() {
 		router.push("/result");
 	};
 
+    // Reward View
 	if (showReward) {
-		const correctAnswers = answers.filter(
-			(answer, index) => answer === randomQuestions[index].correct
-		).length;
-		const reward = correctAnswers * 100 + 100;
-		console.log(reward);
-
 		return (
 			<div className='min-h-screen flex items-center justify-center p-4 bg-slate-900'>
 				<Card className='w-full max-w-md bg-slate-800 border-slate-700'>
 					<CardContent className='p-8 text-center'>
+                        {/* Your reward UI code... */}
 						<div className='mb-6'>
-							<img
-								src='/coin.png'
-								className='w-20 h-20 animate-pulse mx-auto mb-4'
-								alt='coin'
-							/>
-							<h2 className='text-2xl font-bold text-white mb-2'>
-								New Reward Available!
-							</h2>
+							<img src='/coin.png' className='w-20 h-20 animate-pulse mx-auto mb-4' alt='coin' />
+							<h2 className='text-2xl font-bold text-white mb-2'>New Reward Available!</h2>
 							<div className='bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 rounded-lg p-4 mb-4'>
-								<p className='text-2xl font-bold'>
-									Get Instant 100 Coins!
-								</p>
+								<p className='text-2xl font-bold'>Get Instant 100 Coins!</p>
 							</div>
 						</div>
-						<p className='text-slate-400 mb-4'>
-							Watch a simple add get rewarded
-						</p>
-						<Button
-							onClick={handleContinue}
-							className='w-full bg-gradient-to-r from-orange-400 to-yellow-500 cursor-pointer text-slate-900 hover:from-orange-500 hover:to-yellow-600'>
+						<Button onClick={handleContinue} className='w-full bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 hover:from-orange-500'>
 							Claim
 						</Button>
 					</CardContent>
@@ -226,41 +212,32 @@ export default function WelcomePage() {
 
 	return (
 		<div className='min-h-screen flex items-center justify-center p-4 bg-slate-900'>
-					<Card className='w-full max-w-md bg-slate-800 border-slate-700'>
+            
+            {/* 4. RENDER THE DIALOG AD HERE */}
+            <DialogAd 
+                isOpen={isAdOpen} 
+                onClose={() => setIsAdOpen(false)} 
+            />
+
+			<Card className='w-full max-w-md bg-slate-800 border-slate-700'>
 				<CardContent className='p-6'>
-						<AdSenseBanner />
-		<label style={{
-  display: 'block',
-  margin: '0px auto',
-  width: 'fit-content',
-  letterSpacing: '4px',
-  color: 'rgb(65, 77, 101)',
-  font: '400 9px / 2 Arial, sans-serif',
-  opacity: 0.7
-}}>
-  ADVERTISEMENT
-</label>
-					{/* Header */}
+					<AdSenseBanner />
+					<label style={{ display: 'block', margin: '0px auto', width: 'fit-content', letterSpacing: '4px', color: 'rgb(65, 77, 101)', font: '400 9px / 2 Arial, sans-serif', opacity: 0.7 }}>
+                        ADVERTISEMENT
+                    </label>
 					
+                    {/* Header */}
 					<div className='text-center mb-6'>
-						<h1 className='text-2xl font-bold text-white mb-2'>
-							Quick Start
-						</h1>
-						<p className='text-slate-300 mb-4'>
-							Answer 2 questions and win upto 200 coins.
-						</p>
+						<h1 className='text-2xl font-bold text-white mb-2'>Quick Start</h1>
+						<p className='text-slate-300 mb-4'>Answer 2 questions and win upto 200 coins.</p>
 						<div className='inline-block bg-slate-700 px-4 py-2 rounded-full'>
-							<span className='text-white font-medium'>
-								{currentQuestion + 1}/2 Question
-							</span>
+							<span className='text-white font-medium'>{currentQuestion + 1}/2 Question</span>
 						</div>
 					</div>
 
 					{/* Question */}
 					<div className='mb-6'>
-						<h2 className='text-lg font-semibold text-white mb-4 text-center'>
-							{question.question}
-						</h2>
+						<h2 className='text-lg font-semibold text-white mb-4 text-center'>{question.question}</h2>
 					</div>
 
 					{/* Options */}
@@ -274,8 +251,7 @@ export default function WelcomePage() {
 									showResult
 										? index === question.correct
 											? "bg-green-500/20 border-green-500 text-green-400"
-											: index === selectedAnswer &&
-											  index !== question.correct
+											: index === selectedAnswer && index !== question.correct
 											? "bg-red-500/20 border-red-500 text-red-400"
 											: "bg-slate-700 border-slate-600 text-slate-300"
 										: "bg-slate-700 border-slate-600 text-slate-300 hover:border-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
@@ -288,67 +264,21 @@ export default function WelcomePage() {
 					{/* Fun Fact */}
 					{showResult && (
 						<div className='bg-slate-700 rounded-lg p-4 mb-6'>
-							<h3 className='text-orange-400 font-semibold mb-2'>
-								#Fun Fact
-							</h3>
-							<p className='text-slate-300 text-sm'>
-								{question.funFact}
-							</p>
+							<h3 className='text-orange-400 font-semibold mb-2'>#Fun Fact</h3>
+							<p className='text-slate-300 text-sm'>{question.funFact}</p>
 						</div>
 					)}
 
-					{/* Info Section - Only show on first question */}
-					{currentQuestion === 0 && !showResult && (
-						<div className='bg-slate-700 rounded-lg p-4'>
-							<h3 className='text-white font-bold text-center mb-3'>
-								Play Quiz and Win Coins!
-							</h3>
-							<ul className='text-slate-300 text-sm space-y-2'>
-								<li className='flex items-start gap-2'>
-									<span className='text-orange-400'>•</span>
-									<span>
-										Play Quizzes in 25+ categories like GK,
-										Sports, Bollywood, Business, Cricket &
-										more!
-									</span>
-								</li>
-								<li className='flex items-start gap-2'>
-									<span className='text-orange-400'>•</span>
-									<span>
-										Compete with lakhs of other players!
-									</span>
-								</li>
-								<li className='flex items-start gap-2'>
-									<span className='text-orange-400'>•</span>
-									<span>Win coins for every game</span>
-								</li>
-								<li className='flex items-start gap-2'>
-									<span className='text-orange-400'>•</span>
-									<span>
-										Trusted by millions of other quiz
-										enthusiasts like YOU!
-									</span>
-								</li>
-							</ul>
-						</div>
-					)}
-
-					{/* Result Feedback */}
+                    {/* Result Feedback */}
 					{showResult && (
 						<div className='text-center'>
 							{isCorrect ? (
 								<div className='flex items-center justify-center gap-2 text-green-400'>
-									<CheckCircle className='w-5 h-5' />
-									<span className='font-semibold'>
-										Correct! +100 coins
-									</span>
+									<CheckCircle className='w-5 h-5' /><span className='font-semibold'>Correct! +100 coins</span>
 								</div>
 							) : (
 								<div className='flex items-center justify-center gap-2 text-red-400'>
-									<XCircle className='w-5 h-5' />
-									<span className='font-semibold'>
-										Incorrect! +0 coins
-									</span>
+									<XCircle className='w-5 h-5' /><span className='font-semibold'>Incorrect! +0 coins</span>
 								</div>
 							)}
 						</div>
