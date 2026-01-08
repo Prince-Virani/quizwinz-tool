@@ -2,16 +2,31 @@
 
 import { useEffect, useRef } from "react";
 
-// Declare global window type for googletag
+// Define proper types for googletag
+interface GoogleTagSlot {
+  defineSizeMapping: (mapping: unknown) => GoogleTagSlot;
+  addService: (service: unknown) => GoogleTagSlot;
+}
+
+interface GoogleTagPubAds {
+  enableSingleRequest: () => void;
+  collapseEmptyDivs: () => void;
+}
+
+interface GoogleTagSizeMapping {
+  addSize: (viewportSize: number[], adSizes: (number[] | number[][])) => GoogleTagSizeMapping;
+  build: () => unknown;
+}
+
 declare global {
   interface Window {
     googletag: {
       cmd: Array<() => void>;
-      defineSlot?: (adUnitPath: string, size: any, divId: string) => any;
+      defineSlot?: (adUnitPath: string, size: number[] | number[][], divId: string) => GoogleTagSlot | null;
       enableServices?: () => void;
       display?: (divId: string) => void;
-      pubads?: () => any;
-      sizeMapping?: () => any;
+      pubads?: () => GoogleTagPubAds;
+      sizeMapping?: () => GoogleTagSizeMapping;
     };
   }
 }
@@ -57,19 +72,25 @@ export default function Popupnative({
 
             // Define the ad slot with responsive sizes
             const slot = window.googletag
-              .defineSlot(adUnitPath, [[300, 250], [320, 50], [320, 100], [728, 90], [970, 90], [970, 250]], divId)
-              ?.defineSizeMapping(mapping)
-              ?.addService(window.googletag.pubads?.());
+              .defineSlot(adUnitPath, [[300, 250], [320, 50], [320, 100], [728, 90], [970, 90], [970, 250]], divId);
+            
+            if (slot && mapping) {
+              slot.defineSizeMapping(mapping).addService(window.googletag.pubads?.());
+            }
           } else {
             // Define the ad slot with fixed size
-            window.googletag
-              .defineSlot(adUnitPath, [300, 250], divId)
-              ?.addService(window.googletag.pubads?.());
+            const slot = window.googletag.defineSlot(adUnitPath, [300, 250], divId);
+            if (slot) {
+              slot.addService(window.googletag.pubads?.());
+            }
           }
 
           // Enable single request and responsive behavior
-          window.googletag.pubads?.().enableSingleRequest();
-          window.googletag.pubads?.().collapseEmptyDivs();
+          const pubads = window.googletag.pubads?.();
+          if (pubads) {
+            pubads.enableSingleRequest();
+            pubads.collapseEmptyDivs();
+          }
           
           // Enable services
           window.googletag.enableServices?.();
