@@ -5,9 +5,29 @@ import { useEffect, useRef } from "react";
 // Declare global window type for adsbygoogle
 declare global {
   interface Window {
-    googletag: any;
-    adsbygoogle: unknown[];
+    googletag: {
+      cmd: { push: (fn: () => void) => void };
+      defineSlot: (
+        adUnitPath: string,
+        size: any,
+        divId: string
+      ) => googletag.Slot | null;
+      pubads: () => {
+        addEventListener?: Function;
+      };
+      enableServices: () => void;
+      display: (divId: string) => void;
+      destroySlots: (slots?: googletag.Slot[]) => boolean;
+    };
+  }
+
+  namespace googletag {
+    // FIX: We added 'addService' here so TypeScript knows it exists
+    interface Slot {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      addService: (service: any) => Slot;
     }
+  }
 }
 
 
@@ -37,39 +57,36 @@ export default function AdSenseBanner() {
 }
   */
 export default function AdSenseBanner() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const adSlotRef = useRef<any>(null);
+  const adSlotRef = useRef<googletag.Slot | null>(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const { googletag } = window;
+    if (!window.googletag) return;
 
-      googletag.cmd.push(() => {
-        // Destroy old slot if it exists (prevents duplicate slot errors on navigation)
-        if (adSlotRef.current) {
-          googletag.destroySlots([adSlotRef.current]);
-        }
+    window.googletag.cmd.push(() => {
+      // Destroy previous slot (important for navigation)
+      if (adSlotRef.current) {
+        window.googletag.destroySlots([adSlotRef.current]);
+        adSlotRef.current = null;
+      }
 
-        // Define the slot with "fluid" size
-        adSlotRef.current = googletag.defineSlot(
-          '/23287200353/quiz1native', 
-          ['fluid'], 
-          'div-gpt-ad-1767851347418-0'
-        );
+      const slot = window.googletag.defineSlot(
+        "/23287200353/quiz1native",
+        ["fluid"],
+        "div-gpt-ad-1767851347418-0"
+      );
 
-        if (adSlotRef.current) {
-           adSlotRef.current.addService(googletag.pubads());
-           googletag.enableServices();
-           googletag.display('div-gpt-ad-1767851347418-0');
-        }
-      });
-    }
+      if (slot) {
+        slot.addService(window.googletag.pubads());
+        window.googletag.enableServices();
+        window.googletag.display("div-gpt-ad-1767851347418-0");
+        adSlotRef.current = slot;
+      }
+    });
   }, []);
 
   return (
-    // Container width controls the ad width
-    <div className="w-full my-4"> 
-      <div id="div-gpt-ad-1767851347418-0"></div>
+    <div className="w-full my-4">
+      <div id="div-gpt-ad-1767851347418-0" />
     </div>
   );
 }
