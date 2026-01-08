@@ -2,34 +2,7 @@
 
 import { useEffect, useRef, useMemo } from "react";
 
-// Define proper types for googletag
-interface GoogleTagSlot {
-  defineSizeMapping: (mapping: unknown) => GoogleTagSlot;
-  addService: (service: unknown) => GoogleTagSlot;
-}
 
-interface GoogleTagPubAds {
-  enableSingleRequest: () => void;
-  collapseEmptyDivs: () => void;
-}
-
-interface GoogleTagSizeMapping {
-  addSize: (viewportSize: number[], adSizes: (number[] | number[][])) => GoogleTagSizeMapping;
-  build: () => unknown;
-}
-
-declare global {
-  interface Window {
-    googletag: {
-      cmd: Array<() => void>;
-      defineSlot?: (adUnitPath: string, size: number[] | number[][], divId: string) => GoogleTagSlot | null;
-      enableServices?: () => void;
-      display?: (divId: string) => void;
-      pubads?: () => GoogleTagPubAds;
-      sizeMapping?: () => GoogleTagSizeMapping;
-    };
-  }
-}
 
 interface AdXBannerProps {
   adUnitPath?: string;
@@ -63,67 +36,51 @@ export default function AdSenseBanner({
     if (isAdLoaded.current || initializedSlots.has(uniqueDivId)) return;
 
     const loadAd = () => {
-      try {
-        if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
 
-        // Initialize googletag
-        window.googletag = window.googletag || { cmd: [] };
+  // Ensure googletag exists
+  if (!window.googletag) {
+    window.googletag = { cmd: [] };
+  }
 
-        window.googletag.cmd.push(() => {
-          if (!window.googletag.defineSlot) return;
+  const gt = window.googletag;
 
-          // Check if slot already exists
-          if (initializedSlots.has(uniqueDivId)) return;
+  gt.cmd.push(() => {
+    // Guard defineSlot
+    if (!gt.defineSlot) return;
 
-          if (responsive) {
-            // Create size mapping for responsive ads
-            const mapping = window.googletag.sizeMapping?.()
-              // Mobile
-              .addSize([0, 0], [[300, 250], [320, 50], [320, 100]])
-              // Tablet
-              .addSize([750, 0], [[300, 250], [728, 90]])
-              // Desktop
-              .addSize([1050, 0], [[300, 250], [728, 90], [970, 90], [970, 250]])
-              .build();
+    // Build size mapping safely
+    const mappingBuilder = gt.sizeMapping?.();
+    const mapping = mappingBuilder
+      ?.addSize?.([0, 0], [[300, 250], [320, 50], [320, 100]])
+      ?.addSize?.([750, 0], [[300, 250], [728, 90]])
+      ?.addSize?.([1050, 0], [[300, 250], [728, 90], [970, 90]])
+      ?.build?.();
 
-            // Define the ad slot with responsive sizes
-            const slot = window.googletag
-              .defineSlot(adUnitPath, [[300, 250], [320, 50], [320, 100], [728, 90], [970, 90], [970, 250]], uniqueDivId);
-            
-            if (slot && mapping) {
-              slot.defineSizeMapping(mapping).addService(window.googletag.pubads?.());
-            }
-          } else {
-            // Define the ad slot with fixed size
-            const slot = window.googletag.defineSlot(adUnitPath, [300, 250], uniqueDivId);
-            if (slot) {
-              slot.addService(window.googletag.pubads?.());
-            }
-          }
+    // Define slot
+    const slot = gt.defineSlot(
+      adUnitPath,
+      [[300, 250], [320, 50], [320, 100], [728, 90], [970, 90]],
+      uniqueDivId
+    );
 
-          // Enable single request and responsive behavior (only once for first ad)
-          if (initializedSlots.size === 0) {
-            const pubads = window.googletag.pubads?.();
-            if (pubads) {
-              pubads.enableSingleRequest();
-              pubads.collapseEmptyDivs();
-            }
-            
-            // Enable services
-            window.googletag.enableServices?.();
-          }
-
-          // Display the ad
-          window.googletag.display?.(uniqueDivId);
-
-          // Mark this slot as initialized
-          initializedSlots.add(uniqueDivId);
-          isAdLoaded.current = true;
-        });
-      } catch (e) {
-        console.error(`Error loading AdX ad (${uniqueDivId}):`, e);
+    // Attach services safely
+    const pubads = gt.pubads?.();
+    if (slot && pubads) {
+      if (mapping && slot.defineSizeMapping) {
+        slot.defineSizeMapping(mapping);
       }
-    };
+      slot.addService?.(pubads);
+    }
+
+    // Enable services once
+    gt.enableServices?.();
+
+    // Display ad
+    gt.display?.(uniqueDivId);
+  });
+};
+
 
     // Load the GPT library if not already loaded
     if (!document.querySelector('script[src*="securepubads.g.doubleclick.net"]')) {

@@ -1,35 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 
-// Define proper types for googletag
-interface GoogleTagSlot {
-  defineSizeMapping: (mapping: unknown) => GoogleTagSlot;
-  addService: (service: unknown) => GoogleTagSlot;
-}
 
-interface GoogleTagPubAds {
-  enableSingleRequest: () => void;
-  collapseEmptyDivs: () => void;
-}
-
-interface GoogleTagSizeMapping {
-  addSize: (viewportSize: number[], adSizes: (number[] | number[][])) => GoogleTagSizeMapping;
-  build: () => unknown;
-}
-
-declare global {
-  interface Window {
-    googletag: {
-      cmd: Array<() => void>;
-      defineSlot?: (adUnitPath: string, size: number[] | number[][], divId: string) => GoogleTagSlot | null;
-      enableServices?: () => void;
-      display?: (divId: string) => void;
-      pubads?: () => GoogleTagPubAds;
-      sizeMapping?: () => GoogleTagSizeMapping;
-    };
-  }
-}
 
 interface AdXBannerProps {
   adUnitPath?: string;
@@ -37,73 +10,77 @@ interface AdXBannerProps {
   responsive?: boolean;
 }
 
+// Track which ad slots have been initialized globally
+const initializedSlots = new Set<string>();
+
+// Counter for auto-generated IDs
+let adCounter = 0;
+
 export default function Popupnative({
   adUnitPath = "/23287200353/quiz1popup",
-  divId = "div-gpt-ad-1767851436902-0",
+  divId,
   responsive = true
 }: AdXBannerProps) {
+  // Generate a unique ID if none provided
+  const uniqueDivId = useMemo(() => {
+    if (divId) return divId;
+    adCounter++;
+    return `div-gpt-ad-auto-${adCounter}-${Date.now()}`;
+  }, [divId]);
+
   const adContainerRef = useRef<HTMLDivElement>(null);
   const isAdLoaded = useRef(false);
 
   useEffect(() => {
     // Prevent duplicate ad loading
-    if (isAdLoaded.current) return;
+    if (isAdLoaded.current || initializedSlots.has(uniqueDivId)) return;
 
     const loadAd = () => {
-      try {
-        if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
 
-        // Initialize googletag
-        window.googletag = window.googletag || { cmd: [] };
+  // Ensure googletag exists
+  if (!window.googletag) {
+    window.googletag = { cmd: [] };
+  }
 
-        window.googletag.cmd.push(() => {
-          if (!window.googletag.defineSlot) return;
+  const gt = window.googletag;
 
-          if (responsive) {
-            // Create size mapping for responsive ads
-            const mapping = window.googletag.sizeMapping?.()
-              // Mobile
-              .addSize([0, 0], [[300, 250], [320, 50], [320, 100]])
-              // Tablet
-              .addSize([750, 0], [[300, 250], [728, 90]])
-              // Desktop
-              .addSize([1050, 0], [[300, 250], [728, 90], [970, 90], [970, 250]])
-              .build();
+  gt.cmd.push(() => {
+    // Guard defineSlot
+    if (!gt.defineSlot) return;
 
-            // Define the ad slot with responsive sizes
-            const slot = window.googletag
-              .defineSlot(adUnitPath, [[300, 250], [320, 50], [320, 100], [728, 90], [970, 90], [970, 250]], divId);
-            
-            if (slot && mapping) {
-              slot.defineSizeMapping(mapping).addService(window.googletag.pubads?.());
-            }
-          } else {
-            // Define the ad slot with fixed size
-            const slot = window.googletag.defineSlot(adUnitPath, [300, 250], divId);
-            if (slot) {
-              slot.addService(window.googletag.pubads?.());
-            }
-          }
+    // Build size mapping safely
+    const mappingBuilder = gt.sizeMapping?.();
+    const mapping = mappingBuilder
+      ?.addSize?.([0, 0], [[300, 250], [320, 50], [320, 100]])
+      ?.addSize?.([750, 0], [[300, 250], [728, 90]])
+      ?.addSize?.([1050, 0], [[300, 250], [728, 90], [970, 90]])
+      ?.build?.();
 
-          // Enable single request and responsive behavior
-          const pubads = window.googletag.pubads?.();
-          if (pubads) {
-            pubads.enableSingleRequest();
-            pubads.collapseEmptyDivs();
-          }
-          
-          // Enable services
-          window.googletag.enableServices?.();
+    // Define slot
+    const slot = gt.defineSlot(
+      adUnitPath,
+      [[300, 250], [320, 50], [320, 100], [728, 90], [970, 90]],
+      uniqueDivId
+    );
 
-          // Display the ad
-          window.googletag.display?.(divId);
-
-          isAdLoaded.current = true;
-        });
-      } catch (e) {
-        console.error('Error loading AdX ad:', e);
+    // Attach services safely
+    const pubads = gt.pubads?.();
+    if (slot && pubads) {
+      if (mapping && slot.defineSizeMapping) {
+        slot.defineSizeMapping(mapping);
       }
-    };
+      slot.addService?.(pubads);
+    }
+
+    // Enable services once
+    gt.enableServices?.();
+
+    // Display ad
+    gt.display?.(uniqueDivId);
+  });
+};
+
 
     // Load the GPT library if not already loaded
     if (!document.querySelector('script[src*="securepubads.g.doubleclick.net"]')) {
@@ -117,15 +94,17 @@ export default function Popupnative({
       loadAd();
     }
 
+    // Cleanup on unmount
     return () => {
-      // Cleanup if needed
+      initializedSlots.delete(uniqueDivId);
+      isAdLoaded.current = false;
     };
-  }, [adUnitPath, divId, responsive]);
+  }, [adUnitPath, uniqueDivId, responsive]);
 
   return (
     <div className="w-full my-4 flex items-center justify-center">
       <div 
-        id={divId} 
+        id={uniqueDivId} 
         ref={adContainerRef}
         className="min-h-[50px] sm:min-h-[90px] lg:min-h-[250px]"
       />

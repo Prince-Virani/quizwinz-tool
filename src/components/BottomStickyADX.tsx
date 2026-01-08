@@ -2,35 +2,6 @@
 
 import { useEffect, useRef, useMemo } from "react";
 
-// Define proper types for googletag
-interface GoogleTagSlot {
-  defineSizeMapping?: (mapping: unknown) => GoogleTagSlot;
-  addService?: (service: unknown) => GoogleTagSlot;
-}
-
-interface GoogleTagPubAds {
-  enableSingleRequest?: () => void;
-  collapseEmptyDivs?: () => void;
-}
-
-interface GoogleTagSizeMapping {
-  addSize?: (viewportSize: number[], adSizes: (number[] | number[][])) => GoogleTagSizeMapping;
-  build?: () => unknown;
-}
-
-declare global {
-  interface Window {
-    googletag: {
-      cmd: Array<() => void>;
-      defineSlot?: (adUnitPath: string, size: number[] | number[][], divId: string) => GoogleTagSlot | null | undefined;
-      enableServices?: () => void;
-      display?: (divId: string) => void;
-      pubads?: () => GoogleTagPubAds | undefined;
-      sizeMapping?: () => GoogleTagSizeMapping | undefined;
-    };
-  }
-}
-
 interface StickyAdProps {
   adUnitPath?: string;
   divId?: string;
