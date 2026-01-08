@@ -9,7 +9,6 @@ declare global {
     }
 }
 
-const adSlotRef = useRef<any>(null);
 
 /*
 export default function AdSenseBanner() {
@@ -37,6 +36,7 @@ export default function AdSenseBanner() {
 }
   */
 export default function AdSenseBanner() {
+  
   const adSlotRef = useRef<any>(null);
 
   useEffect(() => {

@@ -9,8 +9,6 @@ declare global {
   }
 }
 
-const adSlotRef = useRef<any>(null);
-
 /*
 export default function Popupnative() {
   useEffect(() => {
