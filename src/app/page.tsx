@@ -283,6 +283,7 @@ export default function WelcomePage() {
 							)}
 						</div>
 					)}
+					<AdSenseBanner adUnitPath="/23287200353/quiz1sticky" />
 				</CardContent>
 			</Card>
 		</div>
