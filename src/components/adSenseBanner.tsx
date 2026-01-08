@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 
 // Define proper types for googletag
 interface GoogleTagSlot {
@@ -37,17 +37,30 @@ interface AdXBannerProps {
   responsive?: boolean;
 }
 
-export default function AdXBanner({
+// Track which ad slots have been initialized globally
+const initializedSlots = new Set<string>();
+
+// Counter for auto-generated IDs
+let adCounter = 0;
+
+export default function AdSenseBanner({
   adUnitPath = "/23287200353/quiz1native",
-  divId = "div-gpt-ad-1767851347418-0",
+  divId,
   responsive = true
 }: AdXBannerProps) {
+  // Generate a unique ID if none provided
+  const uniqueDivId = useMemo(() => {
+    if (divId) return divId;
+    adCounter++;
+    return `div-gpt-ad-auto-${adCounter}-${Date.now()}`;
+  }, [divId]);
+
   const adContainerRef = useRef<HTMLDivElement>(null);
   const isAdLoaded = useRef(false);
 
   useEffect(() => {
     // Prevent duplicate ad loading
-    if (isAdLoaded.current) return;
+    if (isAdLoaded.current || initializedSlots.has(uniqueDivId)) return;
 
     const loadAd = () => {
       try {
@@ -58,6 +71,9 @@ export default function AdXBanner({
 
         window.googletag.cmd.push(() => {
           if (!window.googletag.defineSlot) return;
+
+          // Check if slot already exists
+          if (initializedSlots.has(uniqueDivId)) return;
 
           if (responsive) {
             // Create size mapping for responsive ads
@@ -72,36 +88,40 @@ export default function AdXBanner({
 
             // Define the ad slot with responsive sizes
             const slot = window.googletag
-              .defineSlot(adUnitPath, [[300, 250], [320, 50], [320, 100], [728, 90], [970, 90], [970, 250]], divId);
+              .defineSlot(adUnitPath, [[300, 250], [320, 50], [320, 100], [728, 90], [970, 90], [970, 250]], uniqueDivId);
             
             if (slot && mapping) {
               slot.defineSizeMapping(mapping).addService(window.googletag.pubads?.());
             }
           } else {
             // Define the ad slot with fixed size
-            const slot = window.googletag.defineSlot(adUnitPath, [300, 250], divId);
+            const slot = window.googletag.defineSlot(adUnitPath, [300, 250], uniqueDivId);
             if (slot) {
               slot.addService(window.googletag.pubads?.());
             }
           }
 
-          // Enable single request and responsive behavior
-          const pubads = window.googletag.pubads?.();
-          if (pubads) {
-            pubads.enableSingleRequest();
-            pubads.collapseEmptyDivs();
+          // Enable single request and responsive behavior (only once for first ad)
+          if (initializedSlots.size === 0) {
+            const pubads = window.googletag.pubads?.();
+            if (pubads) {
+              pubads.enableSingleRequest();
+              pubads.collapseEmptyDivs();
+            }
+            
+            // Enable services
+            window.googletag.enableServices?.();
           }
-          
-          // Enable services
-          window.googletag.enableServices?.();
 
           // Display the ad
-          window.googletag.display?.(divId);
+          window.googletag.display?.(uniqueDivId);
 
+          // Mark this slot as initialized
+          initializedSlots.add(uniqueDivId);
           isAdLoaded.current = true;
         });
       } catch (e) {
-        console.error('Error loading AdX ad:', e);
+        console.error(`Error loading AdX ad (${uniqueDivId}):`, e);
       }
     };
 
@@ -117,15 +137,17 @@ export default function AdXBanner({
       loadAd();
     }
 
+    // Cleanup on unmount
     return () => {
-      // Cleanup if needed
+      initializedSlots.delete(uniqueDivId);
+      isAdLoaded.current = false;
     };
-  }, [adUnitPath, divId, responsive]);
+  }, [adUnitPath, uniqueDivId, responsive]);
 
   return (
     <div className="w-full my-4 flex items-center justify-center">
       <div 
-        id={divId} 
+        id={uniqueDivId} 
         ref={adContainerRef}
         className="min-h-[50px] sm:min-h-[90px] lg:min-h-[250px]"
       />
