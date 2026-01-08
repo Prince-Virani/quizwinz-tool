@@ -6,9 +6,10 @@ import { useEffect, useRef } from "react";
 declare global {
   interface Window {
     adsbygoogle: unknown[];
-    googletag: any;
-  }
+    }
 }
+
+const adSlotRef = useRef<any>(null);
 
 /*
 export default function AdSenseBanner() {
