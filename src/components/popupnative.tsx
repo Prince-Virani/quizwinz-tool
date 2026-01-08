@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 // Declare global window type for adsbygoogle
 declare global {
   interface Window {
     adsbygoogle: unknown[];
+    googletag: any;
   }
 }
 
+/*
 export default function Popupnative() {
   useEffect(() => {
     try {
@@ -33,3 +35,41 @@ export default function Popupnative() {
     </div>
   );
 }
+  */
+ export default function Popupnative() {
+   const adSlotRef = useRef<any>(null);
+ 
+   useEffect(() => {
+     if (typeof window !== "undefined") {
+       const { googletag } = window;
+ 
+       googletag.cmd.push(() => {
+         // destroy old slot if it exists (for navigation safety)
+         if (adSlotRef.current) {
+           googletag.destroySlots([adSlotRef.current]);
+         }
+ 
+         // Define the slot with "fluid" size
+         // This tells Ad Manager to fit the container width
+         adSlotRef.current = googletag.defineSlot(
+           '/23287200353/quiz1popup', 
+           ['fluid'], // <--- CHANGED FROM [300, 250] to ['fluid']
+           'div-gpt-ad-1767851436902-0'
+         );
+ 
+         if (adSlotRef.current) {
+            adSlotRef.current.addService(googletag.pubads());
+            googletag.enableServices();
+            googletag.display('div-gpt-ad-1767851436902-0');
+         }
+       });
+     }
+   }, []);
+ 
+   return (
+     // Container width controls the ad width
+     <div className="w-full my-4"> 
+       <div id="div-gpt-ad-1767851436902-0"></div>
+     </div>
+   );
+ }

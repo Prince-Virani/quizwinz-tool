@@ -76,7 +76,17 @@ export default function RootLayout({
 					}}
 				/>
 				{/* Google AdX */}
-				<script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossOrigin="anonymous"></script>
+				<script 
+						async 
+						src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" 
+						crossOrigin="anonymous"
+						></script>
+						
+						{/* Initialize the command queue immediately */}
+						<script
+						dangerouslySetInnerHTML={{
+							__html: `window.googletag = window.googletag || {cmd: []};`,
+						}}/>
 
 				{/* Google AdSense */}
 				<script
@@ -84,6 +94,7 @@ export default function RootLayout({
 					crossOrigin='anonymous'
 					src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4752801785953456'
 				/>
+
 				<meta name='application-name' content='coinmoro Quiz' />
 				<meta name='format-detection' content='telephone=no' />
 				<meta name='theme-color' content='#000000' />
