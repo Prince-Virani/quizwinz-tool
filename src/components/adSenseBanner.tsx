@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface AdXBannerProps {
   adUnitPath?: string;
@@ -43,10 +43,7 @@ export default function AdSenseBanner({
       // Initialize if missing
       window.googletag = window.googletag || { cmd: [] };
 
-      // FIX: Do NOT assign 'const gt = window.googletag' here.
-      
       window.googletag.cmd.push(() => {
-        // FIX: Access window.googletag INSIDE this function
         const gt = window.googletag;
 
         if (!gt || !gt.defineSlot) return; // Ensure full library is loaded
@@ -104,12 +101,23 @@ export default function AdSenseBanner({
     loadAd();
 
     return () => {
-      // Cleanup on unmount to prevent conflicts
+      // Cleanup on unmount
       if (isAdLoaded.current && typeof window !== 'undefined' && window.googletag) {
          window.googletag.cmd.push(() => {
-            // Find and destroy the slot
-            const slot = window.googletag.pubads?.().getSlots().find(s => s.getSlotElementId() === uniqueDivId);
-            if (slot) window.googletag.destroySlots([slot]);
+            const gt = window.googletag;
+            
+            // FIX: Safely check for pubads and destroySlots before calling them
+            const pubads = gt.pubads ? gt.pubads() : null;
+            
+            if (pubads && pubads.getSlots) {
+                const slots = pubads.getSlots();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const slot = slots.find((s: any) => s.getSlotElementId() === uniqueDivId);
+                
+                if (slot && gt.destroySlots) {
+                    gt.destroySlots([slot]);
+                }
+            }
             initializedSlots.delete(uniqueDivId);
          });
       }
