@@ -231,10 +231,7 @@ export default function WelcomePage() {
                 isOpen={isAdOpen} 
                 onClose={() => setIsAdOpen(false)} 
             />
-			<FullscreenAd
-				show={showFullscreenAd}
-				onClose={() => setShowFullscreenAd(false)}
-			/>
+
 
 			<Card className='w-full max-w-md bg-slate-800 border-slate-700'>
 				<CardContent className='p-6'>

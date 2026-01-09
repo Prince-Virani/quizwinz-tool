@@ -106,7 +106,7 @@ export default function RootLayout({
 				{children}
 				
 				{/* Move sticky ad inside the container */}
-				<StickyAd position="bottom" responsive={true} />
+				<StickyAd position="bottom" />
 			</div>
 			</body>
 		</html>
