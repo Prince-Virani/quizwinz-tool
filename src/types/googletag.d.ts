@@ -19,7 +19,8 @@ declare global {
   interface Window {
     googletag: {
       cmd: Array<() => void>;
-      defineSlot?: (adUnitPath: string, size: number[] | number[][], divId: string) => GoogleTagSlot | null | undefined;
+      // UPDATE THIS LINE to include "fluid" string
+      defineSlot?: (adUnitPath: string, size: number[] | number[][] | "fluid", divId: string) => GoogleTagSlot | null | undefined;
       enableServices?: () => void;
       display?: (divId: string) => void;
       pubads?: () => GoogleTagPubAds | undefined;
