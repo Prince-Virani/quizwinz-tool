@@ -143,7 +143,7 @@ export default function WelcomePage() {
 	const router = useRouter();
 
    // 2. ADD STATE FOR THE fullscreen AD
-	const [showFullscreenAd, setShowFullscreenAd] = useState(false);
+	// const [showFullscreenAd, setShowFullscreenAd] = useState(false);
 	
     const [fullscreenTriggered, setFullscreenTriggered] = useState(false);
 
@@ -162,11 +162,11 @@ export default function WelcomePage() {
 
 	// ... rest of your existing functions (handleAnswerSelect, handleContinue) ...
     const handleAnswerSelect = (answerIndex: number) => {
-	     if (!fullscreenTriggered) {
-				setShowFullscreenAd(true);
-				setFullscreenTriggered(true);
-				return; //pause quiz until ad closed
-			}
+	    //  if (!fullscreenTriggered) {
+		// 		setShowFullscreenAd(true);
+		// 		setFullscreenTriggered(true);
+		// 		return; //pause quiz until ad closed
+		// 	}
 		if (!showResult) {
 			setSelectedAnswer(answerIndex);
 			setShowResult(true);
