@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 
 interface AdXBannerProps {
   adUnitPath?: string;
@@ -10,11 +10,8 @@ interface AdXBannerProps {
   fixedSize?: [number, number];
 }
 
-// Track which ad slots have been initialized globally
+// Track initialized slots locally
 const initializedSlots = new Set<string>();
-
-// Counter for auto-generated IDs
-let adCounter = 0;
 
 export default function AdSenseBanner({
   adUnitPath = "/23287200353/quiz1native",
@@ -23,29 +20,36 @@ export default function AdSenseBanner({
   fluid = false,
   fixedSize
 }: AdXBannerProps) {
-  const uniqueDivId = useMemo(() => {
-    if (divId) return divId;
-    adCounter++;
-    return `div-gpt-ad-auto-${adCounter}-${Date.now()}`;
-  }, [divId]);
-
+  
+  // 1. Use State for the ID to ensure it matches between server and client
+  const [uniqueDivId, setUniqueDivId] = useState<string>("");
   const adContainerRef = useRef<HTMLDivElement>(null);
   const isAdLoaded = useRef(false);
 
   useEffect(() => {
-    if (isAdLoaded.current || initializedSlots.has(uniqueDivId)) return;
+    // Generate the ID only on the client side
+    if (divId) {
+      setUniqueDivId(divId);
+    } else {
+      setUniqueDivId(`div-gpt-ad-auto-${Math.random().toString(36).substring(2, 9)}`);
+    }
+  }, [divId]);
+
+  useEffect(() => {
+    if (!uniqueDivId || isAdLoaded.current || initializedSlots.has(uniqueDivId)) return;
+    if (typeof window === "undefined") return;
 
     const loadAd = () => {
-      if (typeof window === "undefined") return;
+      // Initialize if missing
+      window.googletag = window.googletag || { cmd: [] };
 
-      if (!window.googletag) {
-        window.googletag = { cmd: [] };
-      }
+      // FIX: Do NOT assign 'const gt = window.googletag' here.
+      
+      window.googletag.cmd.push(() => {
+        // FIX: Access window.googletag INSIDE this function
+        const gt = window.googletag;
 
-      const gt = window.googletag;
-
-      gt.cmd.push(() => {
-        if (!gt.defineSlot) return;
+        if (!gt || !gt.defineSlot) return; // Ensure full library is loaded
         if (initializedSlots.has(uniqueDivId)) return;
 
         let slot;
@@ -83,9 +87,10 @@ export default function AdSenseBanner({
           slot.addService(pubads);
         }
 
-        if (initializedSlots.size === 0) {
-          pubads?.enableSingleRequest?.();
-          pubads?.collapseEmptyDivs?.();
+        // Only enable services if they aren't already running
+        if (pubads && !pubads.ready) {
+          pubads.enableSingleRequest?.();
+          pubads.collapseEmptyDivs?.();
           gt.enableServices?.();
         }
 
@@ -96,14 +101,24 @@ export default function AdSenseBanner({
       });
     };
 
-    // Don't load script - it's already in layout.tsx
     loadAd();
 
     return () => {
-      initializedSlots.delete(uniqueDivId);
+      // Cleanup on unmount to prevent conflicts
+      if (isAdLoaded.current && typeof window !== 'undefined' && window.googletag) {
+         window.googletag.cmd.push(() => {
+            // Find and destroy the slot
+            const slot = window.googletag.pubads?.().getSlots().find(s => s.getSlotElementId() === uniqueDivId);
+            if (slot) window.googletag.destroySlots([slot]);
+            initializedSlots.delete(uniqueDivId);
+         });
+      }
       isAdLoaded.current = false;
     };
   }, [adUnitPath, uniqueDivId, responsive, fluid, fixedSize]);
+
+  // Render a placeholder if ID isn't ready yet
+  if (!uniqueDivId) return <div className="w-full my-4 min-h-[250px]" />;
 
   const containerClasses = fluid 
     ? "w-full my-4" 
