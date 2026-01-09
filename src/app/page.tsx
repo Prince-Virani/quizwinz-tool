@@ -7,8 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, XCircle } from "lucide-react";
 import AdSenseBanner from "@/components/adSenseBanner";
 import DialogAd from "@/components/DialogAd";
-// 1. IMPORT YOUR NEW COMPONENT
-import FullscreenAd from "@/components/fullScreen"; 
+import FullscreenAd from "@/components/fullScreen";
 
 const demoQuestions = [
     {
@@ -137,10 +136,10 @@ export default function WelcomePage() {
     const [answers, setAnswers] = useState<number[]>([]);
     const [showReward, setShowReward] = useState(false);
     
-    // State for your existing custom dialog ad
+    // State for existing dialog ad
     const [isAdOpen, setIsAdOpen] = useState(false);
 
-    // 2. ADD STATE FOR GOOGLE INTERSTITIAL
+    // State for Google Interstitial
     const [triggerInterstitial, setTriggerInterstitial] = useState(false);
 
     const router = useRouter();
@@ -148,7 +147,6 @@ export default function WelcomePage() {
     useEffect(() => {
         setRandomQuestions(getRandomQuestions(demoQuestions, 2));
         
-        // Your existing dialog triggers on load
         const adTimer = setTimeout(() => {
             setIsAdOpen(true);
         }, 1000);
@@ -156,10 +154,11 @@ export default function WelcomePage() {
         return () => clearTimeout(adTimer);
     }, []);
 
-    const handleAnswerSelect = (answerIndex: number) => {
-        // 3. TRIGGER INTERSTITIAL ON CLICK
-        // We set this to true. The component checks if it has already shown
-        // in this session, so it won't spam the user on every click.
+    // MODIFIED HANDLER to accept the event (e)
+    const handleAnswerSelect = (e: React.MouseEvent<HTMLAnchorElement>, answerIndex: number) => {
+        e.preventDefault(); // Prevent standard link navigation
+        
+        // Trigger Interstitial
         setTriggerInterstitial(true);
 
         if (!showResult) {
@@ -175,7 +174,6 @@ export default function WelcomePage() {
                     setSelectedAnswer(null);
                     setShowResult(false);
                 } else {
-                    // Reward logic
                     const correctAnswers = newAnswers.filter(
                         (answer, index) => answer === randomQuestions[index].correct
                     ).length;
@@ -192,7 +190,6 @@ export default function WelcomePage() {
         router.push("/result");
     };
 
-    // Reward View
     if (showReward) {
         return (
             <div className='min-h-screen flex items-center justify-center p-4 bg-slate-900'>
@@ -220,14 +217,11 @@ export default function WelcomePage() {
     return (
         <div className='min-h-screen flex items-center justify-center p-4 bg-slate-900'>
             
-            {/* 4. RENDER THE INTERSTITIAL COMPONENT */}
-            {/* It renders nothing visible, but injects the Google script when "show" is true */}
             <FullscreenAd 
                 show={triggerInterstitial} 
                 onClose={() => setTriggerInterstitial(false)} 
             />
 
-            {/* Your existing custom Dialog Ad */}
             <DialogAd 
                 isOpen={isAdOpen} 
                 onClose={() => setIsAdOpen(false)} 
@@ -240,7 +234,6 @@ export default function WelcomePage() {
                         ADVERTISEMENT
                     </label>
                     
-                    {/* Header */}
                     <div className='text-center mb-6'>
                         <h1 className='text-2xl font-bold text-white mb-2'>Quick Start</h1>
                         <p className='text-slate-300 mb-4'>Answer 2 questions and win upto 200 coins.</p>
@@ -249,19 +242,22 @@ export default function WelcomePage() {
                         </div>
                     </div>
 
-                    {/* Question */}
                     <div className='mb-6'>
                         <h2 className='text-lg font-semibold text-white mb-4 text-center'>{question.question}</h2>
                     </div>
 
-                    {/* Options */}
+                    {/* Options Grid */}
                     <div className='grid grid-cols-2 gap-3 mb-6'>
                         {question.options.map((option, index) => (
-                            <button
+                            <a
                                 key={index}
-                                onClick={() => handleAnswerSelect(index)}
-                                disabled={showResult}
-                                className={`p-3 text-sm font-medium rounded-lg border transition-all duration-200 ${
+                                href="#"
+                                onClick={(e) => handleAnswerSelect(e, index)}
+                                className={`
+                                    block w-full text-center no-underline cursor-pointer
+                                    p-3 text-sm font-medium rounded-lg border transition-all duration-200 
+                                    ${showResult && "pointer-events-none"} 
+                                    ${
                                     showResult
                                         ? index === question.correct
                                             ? "bg-green-500/20 border-green-500 text-green-400"
@@ -269,13 +265,13 @@ export default function WelcomePage() {
                                             ? "bg-red-500/20 border-red-500 text-red-400"
                                             : "bg-slate-700 border-slate-600 text-slate-300"
                                         : "bg-slate-700 border-slate-600 text-slate-300 hover:border-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
-                                }`}>
+                                }`}
+                            >
                                 {option}
-                            </button>
+                            </a>
                         ))}
                     </div>
 
-                    {/* Fun Fact */}
                     {showResult && (
                         <div className='bg-slate-700 rounded-lg p-4 mb-6'>
                             <h3 className='text-orange-400 font-semibold mb-2'>#Fun Fact</h3>
@@ -283,7 +279,6 @@ export default function WelcomePage() {
                         </div>
                     )}
 
-                    {/* Result Feedback */}
                     {showResult && (
                         <div className='text-center'>
                             {isCorrect ? (
