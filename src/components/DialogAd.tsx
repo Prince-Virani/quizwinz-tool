@@ -2,7 +2,7 @@
 
 import { X } from "lucide-react";
 import { useEffect } from "react";
-import Popupnative from "@/components/popupnative";
+// import Popupnative from "@/components/popupnative";
 
 interface DialogAdProps {
   isOpen: boolean;
@@ -37,7 +37,7 @@ export default function DialogAd({ isOpen, onClose }: DialogAdProps) {
         </button>
 
         {/* 3. Content: Directly render the ad component without extra padding/wrappers */}
-        <Popupnative />
+        {/* <Popupnative /> */}
         
       </div>
     </div>
