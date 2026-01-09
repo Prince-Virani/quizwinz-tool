@@ -2,9 +2,30 @@
 
 import { useEffect, useRef } from "react";
 
+// 1. Define strict types locally to prevent TypeScript errors
+interface IGoogletag {
+  cmd: Array<() => void>;
+  defineOutOfPageSlot: (
+    adUnitPath: string,
+    format: number
+  ) => { addService: (service: unknown) => void } | null;
+  enums: {
+    OutOfPageFormat: {
+      INTERSTITIAL: number;
+    };
+  };
+  pubads: () => {
+    enableSingleRequest?: () => void;
+    collapseEmptyDivs?: () => void;
+    addEventListener?: (event: string, callback: () => void) => void;
+  };
+  enableServices: () => void;
+  display: (slot: unknown) => void;
+}
+
 const SESSION_KEY = "quiz_interstitial_shown";
 
-// Track fullscreen slot separately
+// Track initialization globally
 const initializedSlots = new Set<string>();
 
 export default function FullscreenAd({
@@ -14,103 +35,69 @@ export default function FullscreenAd({
   show: boolean;
   onClose: () => void;
 }) {
-  const divId = "div-gpt-ad-interstitial";
+  const adUnitPath = "/23287200353/quiz1Inter";
   const isAdLoaded = useRef(false);
 
   useEffect(() => {
+    // 1. Basic Checks
     if (!show) return;
     if (isAdLoaded.current) return;
     if (typeof window === "undefined") return;
+    
+    // Check Session (Don't show if already shown this session)
     if (sessionStorage.getItem(SESSION_KEY)) return;
-    if (initializedSlots.has(divId)) return;
 
-    // Ensure googletag exists
-    if (!window.googletag) {
-      window.googletag = { cmd: [] };
-    }
+    // 2. Initialize GPT
+    const googletag = (window.googletag = window.googletag || { cmd: [] }) as unknown as IGoogletag;
 
-    const gt = window.googletag;
+    googletag.cmd.push(() => {
+      // Safety Check
+      if (!googletag.defineOutOfPageSlot) return;
 
-    gt.cmd.push(() => {
-      if (!gt.defineSlot) return;
-      if (initializedSlots.has(divId)) return;
+      // Prevent defining the same slot twice
+      if (initializedSlots.has(adUnitPath)) return;
 
-      const slot = gt.defineSlot(
-        "/23287200353/quiz1Inter",
-        [
-          [300, 250],
-          [320, 480],
-          [336, 280],
-        ],
-        divId
+      // 3. Define the Out-of-Page Interstitial Slot
+      const slot = googletag.defineOutOfPageSlot(
+        adUnitPath,
+        googletag.enums.OutOfPageFormat.INTERSTITIAL
       );
 
-      const pubads = gt.pubads?.();
+      // 4. Standard Service setup
+      if (slot) {
+        const pubads = googletag.pubads?.();
+        if (pubads) {
+          slot.addService(pubads);
 
-      if (slot && pubads && slot.addService) {
-        slot.addService(pubads);
+          // Optional: Listen for when the ad closes to trigger your parent onClose logic
+          // (Google Interstitials are hard to track 'close' events for, but this helps cleanup)
+          pubads.addEventListener?.("slotOnload", () => {
+             // Mark as shown when loaded
+             sessionStorage.setItem(SESSION_KEY, "1");
+          });
+        }
       }
 
-      // Enable services ONLY once (same logic as Popupnative)
+      // 5. Enable Services (Once)
       if (initializedSlots.size === 0) {
-        pubads?.enableSingleRequest?.();
-        gt.enableServices?.();
+        googletag.pubads?.().enableSingleRequest?.();
+        googletag.enableServices?.();
       }
 
-      gt.display?.(divId);
+      // 6. Display (Triggers the Google Overlay)
+      // For OutOfPage, we display the slot object itself
+      if (slot) {
+        googletag.display(slot);
+      }
 
-      initializedSlots.add(divId);
+      initializedSlots.add(adUnitPath);
       isAdLoaded.current = true;
-      sessionStorage.setItem(SESSION_KEY, "1");
     });
 
-    return () => {
-      initializedSlots.delete(divId);
-      isAdLoaded.current = false;
-    };
+    // Cleanup not typically needed for OOP as Google manages the lifecycle
   }, [show]);
 
-  if (!show) return null;
-
-  return (
-    <div style={overlay}>
-      <div style={adBox}>
-        <button style={closeBtn} onClick={onClose}>
-          ✕
-        </button>
-        <div id={divId} style={{ minWidth: 300, minHeight: 250 }} />
-      </div>
-    </div>
-  );
+  // We return NULL because Google creates its own Fullscreen UI
+  // Your custom overlay/divs are no longer needed.
+  return null;
 }
-
-/* styles */
-const overlay: React.CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(0,0,0,0.85)",
-  zIndex: 99999,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-};
-
-const adBox: React.CSSProperties = {
-  background: "#fff",
-  padding: 10,
-  borderRadius: 8,
-  position: "relative",
-};
-
-const closeBtn: React.CSSProperties = {
-  position: "absolute",
-  top: -12,
-  right: -12,
-  width: 28,
-  height: 28,
-  borderRadius: "50%",
-  border: "none",
-  background: "#000",
-  color: "#fff",
-  cursor: "pointer",
-};

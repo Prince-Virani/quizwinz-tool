@@ -7,298 +7,298 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, XCircle } from "lucide-react";
 import AdSenseBanner from "@/components/adSenseBanner";
 import DialogAd from "@/components/DialogAd";
-// import FullscreenAd from "@/components/fullScreen";
-
+// 1. IMPORT YOUR NEW COMPONENT
+import FullscreenAd from "@/components/fullScreen"; 
 
 const demoQuestions = [
-	{
-		id: 1,
-		question:
-			"Which actress won the Academy Award for Best Actress in 2020?",
-		options: [
-			"Renee Zellweger",
-			"Scarlett Johansson",
-			"Charlize Theron",
-			"Natalie Portman",
-		],
-		correct: 0,
-		funFact:
-			"Renee Zellweger won for her role as Judy Garland in 'Judy', marking her second Academy Award win.",
-	},
-	{
-		id: 2,
-		question:
-			"Who holds the record for most successful captain in IPL history?",
-		options: ["Virat Kohli", "MS Dhoni", "Rohit Sharma", "Gautam Gambhir"],
-		correct: 1,
-		funFact:
-			"MS Dhoni has led Chennai Super Kings to multiple IPL titles, making him the most successful captain in IPL history.",
-	},
-	{
-		id: 3,
-		question: "What is the capital of France?",
-		options: ["Berlin", "Madrid", "Paris", "Rome"],
-		correct: 2,
-		funFact:
-			"Paris is known as the 'City of Light' and is famous for its art, fashion, and culture.",
-	},
-	{
-		id: 4,
-		question: "Which planet is known as the Red Planet?",
-		options: ["Earth", "Mars", "Jupiter", "Venus"],
-		correct: 1,
-		funFact:
-			"Mars is called the Red Planet due to its reddish appearance, caused by iron oxide on its surface.",
-	},
-	{
-		id: 5,
-		question: "Who wrote the play 'Romeo and Juliet'?",
-		options: [
-			"William Shakespeare",
-			"Charles Dickens",
-			"Jane Austen",
-			"Mark Twain",
-		],
-		correct: 0,
-		funFact:
-			"'Romeo and Juliet' is one of Shakespeare's most famous tragedies.",
-	},
-	{
-		id: 6,
-		question: "What is the largest mammal in the world?",
-		options: ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
-		correct: 1,
-		funFact:
-			"The blue whale can weigh up to 200 tons and is the largest animal ever known to have existed.",
-	},
-	{
-		id: 7,
-		question: "Which element has the chemical symbol 'O'?",
-		options: ["Gold", "Oxygen", "Osmium", "Oganesson"],
-		correct: 1,
-		funFact:
-			"Oxygen is essential for respiration in most living organisms.",
-	},
-	{
-		id: 8,
-		question: "Who painted the Mona Lisa?",
-		options: [
-			"Vincent van Gogh",
-			"Pablo Picasso",
-			"Leonardo da Vinci",
-			"Claude Monet",
-		],
-		correct: 2,
-		funFact: "The Mona Lisa is displayed at the Louvre Museum in Paris.",
-	},
-	{
-		id: 9,
-		question: "What is the smallest prime number?",
-		options: ["0", "1", "2", "3"],
-		correct: 2,
-		funFact: "2 is the only even prime number.",
-	},
-	{
-		id: 10,
-		question: "Which country is known as the Land of the Rising Sun?",
-		options: ["China", "Japan", "Thailand", "South Korea"],
-		correct: 1,
-		funFact:
-			"Japan is called the Land of the Rising Sun because the sun rises in the east, and Japan is east of China.",
-	},
-	{
-		id: 11,
-		question: "What is the boiling point of water at sea level?",
-		options: ["90°C", "100°C", "110°C", "120°C"],
-		correct: 1,
-		funFact:
-			"Water boils at 100°C (212°F) at standard atmospheric pressure.",
-	},
-	{
-		id: 12,
-		question: "Who is known as the Father of Computers?",
-		options: ["Alan Turing", "Charles Babbage", "Bill Gates", "Steve Jobs"],
-		correct: 1,
-		funFact:
-			"Charles Babbage designed the first mechanical computer, the Analytical Engine.",
-	},
+    {
+        id: 1,
+        question:
+            "Which actress won the Academy Award for Best Actress in 2020?",
+        options: [
+            "Renee Zellweger",
+            "Scarlett Johansson",
+            "Charlize Theron",
+            "Natalie Portman",
+        ],
+        correct: 0,
+        funFact:
+            "Renee Zellweger won for her role as Judy Garland in 'Judy', marking her second Academy Award win.",
+    },
+    {
+        id: 2,
+        question:
+            "Who holds the record for most successful captain in IPL history?",
+        options: ["Virat Kohli", "MS Dhoni", "Rohit Sharma", "Gautam Gambhir"],
+        correct: 1,
+        funFact:
+            "MS Dhoni has led Chennai Super Kings to multiple IPL titles, making him the most successful captain in IPL history.",
+    },
+    {
+        id: 3,
+        question: "What is the capital of France?",
+        options: ["Berlin", "Madrid", "Paris", "Rome"],
+        correct: 2,
+        funFact:
+            "Paris is known as the 'City of Light' and is famous for its art, fashion, and culture.",
+    },
+    {
+        id: 4,
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Mars", "Jupiter", "Venus"],
+        correct: 1,
+        funFact:
+            "Mars is called the Red Planet due to its reddish appearance, caused by iron oxide on its surface.",
+    },
+    {
+        id: 5,
+        question: "Who wrote the play 'Romeo and Juliet'?",
+        options: [
+            "William Shakespeare",
+            "Charles Dickens",
+            "Jane Austen",
+            "Mark Twain",
+        ],
+        correct: 0,
+        funFact:
+            "'Romeo and Juliet' is one of Shakespeare's most famous tragedies.",
+    },
+    {
+        id: 6,
+        question: "What is the largest mammal in the world?",
+        options: ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
+        correct: 1,
+        funFact:
+            "The blue whale can weigh up to 200 tons and is the largest animal ever known to have existed.",
+    },
+    {
+        id: 7,
+        question: "Which element has the chemical symbol 'O'?",
+        options: ["Gold", "Oxygen", "Osmium", "Oganesson"],
+        correct: 1,
+        funFact:
+            "Oxygen is essential for respiration in most living organisms.",
+    },
+    {
+        id: 8,
+        question: "Who painted the Mona Lisa?",
+        options: [
+            "Vincent van Gogh",
+            "Pablo Picasso",
+            "Leonardo da Vinci",
+            "Claude Monet",
+        ],
+        correct: 2,
+        funFact: "The Mona Lisa is displayed at the Louvre Museum in Paris.",
+    },
+    {
+        id: 9,
+        question: "What is the smallest prime number?",
+        options: ["0", "1", "2", "3"],
+        correct: 2,
+        funFact: "2 is the only even prime number.",
+    },
+    {
+        id: 10,
+        question: "Which country is known as the Land of the Rising Sun?",
+        options: ["China", "Japan", "Thailand", "South Korea"],
+        correct: 1,
+        funFact:
+            "Japan is called the Land of the Rising Sun because the sun rises in the east, and Japan is east of China.",
+    },
+    {
+        id: 11,
+        question: "What is the boiling point of water at sea level?",
+        options: ["90°C", "100°C", "110°C", "120°C"],
+        correct: 1,
+        funFact:
+            "Water boils at 100°C (212°F) at standard atmospheric pressure.",
+    },
+    {
+        id: 12,
+        question: "Who is known as the Father of Computers?",
+        options: ["Alan Turing", "Charles Babbage", "Bill Gates", "Steve Jobs"],
+        correct: 1,
+        funFact:
+            "Charles Babbage designed the first mechanical computer, the Analytical Engine.",
+    },
 ];
 
 function getRandomQuestions(arr: typeof demoQuestions, n: number) {
-	const shuffled = arr.slice().sort(() => 0.5 - Math.random());
-	return shuffled.slice(0, n);
+    const shuffled = arr.slice().sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, n);
 }
 
 export default function WelcomePage() {
-	const [randomQuestions, setRandomQuestions] = useState(demoQuestions.slice(0, 2));
-	const [currentQuestion, setCurrentQuestion] = useState(0);
-	const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-	const [showResult, setShowResult] = useState(false);
-	const [answers, setAnswers] = useState<number[]>([]);
-	const [showReward, setShowReward] = useState(false);
+    const [randomQuestions, setRandomQuestions] = useState(demoQuestions.slice(0, 2));
+    const [currentQuestion, setCurrentQuestion] = useState(0);
+    const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+    const [showResult, setShowResult] = useState(false);
+    const [answers, setAnswers] = useState<number[]>([]);
+    const [showReward, setShowReward] = useState(false);
     
-    // 2. ADD STATE FOR THE POPUP AD
+    // State for your existing custom dialog ad
     const [isAdOpen, setIsAdOpen] = useState(false);
 
-	const router = useRouter();
+    // 2. ADD STATE FOR GOOGLE INTERSTITIAL
+    const [triggerInterstitial, setTriggerInterstitial] = useState(false);
 
-   // 2. ADD STATE FOR THE fullscreen AD
-	// const [showFullscreenAd, setShowFullscreenAd] = useState(false);
-	
-    // const [fullscreenTriggered, setFullscreenTriggered] = useState(false);
+    const router = useRouter();
 
-
-	useEffect(() => {
-		setRandomQuestions(getRandomQuestions(demoQuestions, 2));
+    useEffect(() => {
+        setRandomQuestions(getRandomQuestions(demoQuestions, 2));
         
-        // 3. TRIGGER AD ON PAGE LOAD
-        // We use a small timeout (e.g., 1s) so the user sees the page first, then the ad pops up.
+        // Your existing dialog triggers on load
         const adTimer = setTimeout(() => {
             setIsAdOpen(true);
         }, 1000);
 
         return () => clearTimeout(adTimer);
-	}, []);
+    }, []);
 
-	// ... rest of your existing functions (handleAnswerSelect, handleContinue) ...
     const handleAnswerSelect = (answerIndex: number) => {
-	    //  if (!fullscreenTriggered) {
-		// 		setShowFullscreenAd(true);
-		// 		setFullscreenTriggered(true);
-		// 		return; //pause quiz until ad closed
-		// 	}
-		if (!showResult) {
-			setSelectedAnswer(answerIndex);
-			setShowResult(true);
+        // 3. TRIGGER INTERSTITIAL ON CLICK
+        // We set this to true. The component checks if it has already shown
+        // in this session, so it won't spam the user on every click.
+        setTriggerInterstitial(true);
 
-			setTimeout(() => {
-				const newAnswers = [...answers, answerIndex];
-				setAnswers(newAnswers);
+        if (!showResult) {
+            setSelectedAnswer(answerIndex);
+            setShowResult(true);
 
-				if (currentQuestion < randomQuestions.length - 1) {
-					setCurrentQuestion(currentQuestion + 1);
-					setSelectedAnswer(null);
-					setShowResult(false);
-				} else {
-					// Reward logic
-					const correctAnswers = newAnswers.filter(
-						(answer, index) => answer === randomQuestions[index].correct
-					).length;
-					const reward = correctAnswers * 100 + 100;
-					const currentCoins = Number.parseInt(localStorage.getItem("quizwinz-coins") || "0");
-					localStorage.setItem("quizwinz-coins", (currentCoins + reward).toString());
-					setShowReward(true);
-				}
-			}, 2000);
-		}
-	};
+            setTimeout(() => {
+                const newAnswers = [...answers, answerIndex];
+                setAnswers(newAnswers);
 
-	const handleContinue = () => {
-		router.push("/result");
-	};
+                if (currentQuestion < randomQuestions.length - 1) {
+                    setCurrentQuestion(currentQuestion + 1);
+                    setSelectedAnswer(null);
+                    setShowResult(false);
+                } else {
+                    // Reward logic
+                    const correctAnswers = newAnswers.filter(
+                        (answer, index) => answer === randomQuestions[index].correct
+                    ).length;
+                    const reward = correctAnswers * 100 + 100;
+                    const currentCoins = Number.parseInt(localStorage.getItem("quizwinz-coins") || "0");
+                    localStorage.setItem("quizwinz-coins", (currentCoins + reward).toString());
+                    setShowReward(true);
+                }
+            }, 2000);
+        }
+    };
+
+    const handleContinue = () => {
+        router.push("/result");
+    };
 
     // Reward View
-	if (showReward) {
-		return (
-			<div className='min-h-screen flex items-center justify-center p-4 bg-slate-900'>
-				<Card className='w-full max-w-md bg-slate-800 border-slate-700'>
-					<CardContent className='p-8 text-center'>
-                        {/* Your reward UI code... */}
-						<div className='mb-6'>
-							<img src='/coin.png' className='w-20 h-20 animate-pulse mx-auto mb-4' alt='coin' />
-							<h2 className='text-2xl font-bold text-white mb-2'>New Reward Available!</h2>
-							<div className='bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 rounded-lg p-4 mb-4'>
-								<p className='text-2xl font-bold'>Get Instant 100 Coins!</p>
-							</div>
-						</div>
-						<Button onClick={handleContinue} className='w-full bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 hover:from-orange-500'>
-							Claim
-						</Button>
-					</CardContent>
-				</Card>
-			</div>
-		);
-	}
+    if (showReward) {
+        return (
+            <div className='min-h-screen flex items-center justify-center p-4 bg-slate-900'>
+                <Card className='w-full max-w-md bg-slate-800 border-slate-700'>
+                    <CardContent className='p-8 text-center'>
+                        <div className='mb-6'>
+                            <img src='/coin.png' className='w-20 h-20 animate-pulse mx-auto mb-4' alt='coin' />
+                            <h2 className='text-2xl font-bold text-white mb-2'>New Reward Available!</h2>
+                            <div className='bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 rounded-lg p-4 mb-4'>
+                                <p className='text-2xl font-bold'>Get Instant 100 Coins!</p>
+                            </div>
+                        </div>
+                        <Button onClick={handleContinue} className='w-full bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 hover:from-orange-500'>
+                            Claim
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
 
-	const question = randomQuestions[currentQuestion];
-	const isCorrect = selectedAnswer === question.correct;
+    const question = randomQuestions[currentQuestion];
+    const isCorrect = selectedAnswer === question.correct;
 
-	return (
-		<div className='min-h-screen flex items-center justify-center p-4 bg-slate-900'>
+    return (
+        <div className='min-h-screen flex items-center justify-center p-4 bg-slate-900'>
             
-            {/* 4. RENDER THE DIALOG AD HERE */}
+            {/* 4. RENDER THE INTERSTITIAL COMPONENT */}
+            {/* It renders nothing visible, but injects the Google script when "show" is true */}
+            <FullscreenAd 
+                show={triggerInterstitial} 
+                onClose={() => setTriggerInterstitial(false)} 
+            />
+
+            {/* Your existing custom Dialog Ad */}
             <DialogAd 
                 isOpen={isAdOpen} 
                 onClose={() => setIsAdOpen(false)} 
             />
 
-
-			<Card className='w-full max-w-md bg-slate-800 border-slate-700'>
-				<CardContent className='p-6'>
-					<AdSenseBanner />
-					<label style={{ display: 'block', margin: '0px auto', width: 'fit-content', letterSpacing: '4px', color: 'rgb(65, 77, 101)', font: '400 9px / 2 Arial, sans-serif', opacity: 0.7 }}>
+            <Card className='w-full max-w-md bg-slate-800 border-slate-700'>
+                <CardContent className='p-6'>
+                    <AdSenseBanner />
+                    <label style={{ display: 'block', margin: '0px auto', width: 'fit-content', letterSpacing: '4px', color: 'rgb(65, 77, 101)', font: '400 9px / 2 Arial, sans-serif', opacity: 0.7 }}>
                         ADVERTISEMENT
                     </label>
-					
+                    
                     {/* Header */}
-					<div className='text-center mb-6'>
-						<h1 className='text-2xl font-bold text-white mb-2'>Quick Start</h1>
-						<p className='text-slate-300 mb-4'>Answer 2 questions and win upto 200 coins.</p>
-						<div className='inline-block bg-slate-700 px-4 py-2 rounded-full'>
-							<span className='text-white font-medium'>{currentQuestion + 1}/2 Question</span>
-						</div>
-					</div>
+                    <div className='text-center mb-6'>
+                        <h1 className='text-2xl font-bold text-white mb-2'>Quick Start</h1>
+                        <p className='text-slate-300 mb-4'>Answer 2 questions and win upto 200 coins.</p>
+                        <div className='inline-block bg-slate-700 px-4 py-2 rounded-full'>
+                            <span className='text-white font-medium'>{currentQuestion + 1}/2 Question</span>
+                        </div>
+                    </div>
 
-					{/* Question */}
-					<div className='mb-6'>
-						<h2 className='text-lg font-semibold text-white mb-4 text-center'>{question.question}</h2>
-					</div>
+                    {/* Question */}
+                    <div className='mb-6'>
+                        <h2 className='text-lg font-semibold text-white mb-4 text-center'>{question.question}</h2>
+                    </div>
 
-					{/* Options */}
-					<div className='grid grid-cols-2 gap-3 mb-6'>
-						{question.options.map((option, index) => (
-							<button
-								key={index}
-								onClick={() => handleAnswerSelect(index)}
-								disabled={showResult}
-								className={`p-3 text-sm font-medium rounded-lg border transition-all duration-200 ${
-									showResult
-										? index === question.correct
-											? "bg-green-500/20 border-green-500 text-green-400"
-											: index === selectedAnswer && index !== question.correct
-											? "bg-red-500/20 border-red-500 text-red-400"
-											: "bg-slate-700 border-slate-600 text-slate-300"
-										: "bg-slate-700 border-slate-600 text-slate-300 hover:border-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
-								}`}>
-								{option}
-							</button>
-						))}
-					</div>
+                    {/* Options */}
+                    <div className='grid grid-cols-2 gap-3 mb-6'>
+                        {question.options.map((option, index) => (
+                            <button
+                                key={index}
+                                onClick={() => handleAnswerSelect(index)}
+                                disabled={showResult}
+                                className={`p-3 text-sm font-medium rounded-lg border transition-all duration-200 ${
+                                    showResult
+                                        ? index === question.correct
+                                            ? "bg-green-500/20 border-green-500 text-green-400"
+                                            : index === selectedAnswer && index !== question.correct
+                                            ? "bg-red-500/20 border-red-500 text-red-400"
+                                            : "bg-slate-700 border-slate-600 text-slate-300"
+                                        : "bg-slate-700 border-slate-600 text-slate-300 hover:border-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
+                                }`}>
+                                {option}
+                            </button>
+                        ))}
+                    </div>
 
-					{/* Fun Fact */}
-					{showResult && (
-						<div className='bg-slate-700 rounded-lg p-4 mb-6'>
-							<h3 className='text-orange-400 font-semibold mb-2'>#Fun Fact</h3>
-							<p className='text-slate-300 text-sm'>{question.funFact}</p>
-						</div>
-					)}
+                    {/* Fun Fact */}
+                    {showResult && (
+                        <div className='bg-slate-700 rounded-lg p-4 mb-6'>
+                            <h3 className='text-orange-400 font-semibold mb-2'>#Fun Fact</h3>
+                            <p className='text-slate-300 text-sm'>{question.funFact}</p>
+                        </div>
+                    )}
 
                     {/* Result Feedback */}
-					{showResult && (
-						<div className='text-center'>
-							{isCorrect ? (
-								<div className='flex items-center justify-center gap-2 text-green-400'>
-									<CheckCircle className='w-5 h-5' /><span className='font-semibold'>Correct! +100 coins</span>
-								</div>
-							) : (
-								<div className='flex items-center justify-center gap-2 text-red-400'>
-									<XCircle className='w-5 h-5' /><span className='font-semibold'>Incorrect! +0 coins</span>
-								</div>
-							)}
-						</div>
-					)}
-				</CardContent>
-			</Card>
-		</div>
-	);
+                    {showResult && (
+                        <div className='text-center'>
+                            {isCorrect ? (
+                                <div className='flex items-center justify-center gap-2 text-green-400'>
+                                    <CheckCircle className='w-5 h-5' /><span className='font-semibold'>Correct! +100 coins</span>
+                                </div>
+                            ) : (
+                                <div className='flex items-center justify-center gap-2 text-red-400'>
+                                    <XCircle className='w-5 h-5' /><span className='font-semibold'>Incorrect! +0 coins</span>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+        </div>
+    );
 }
