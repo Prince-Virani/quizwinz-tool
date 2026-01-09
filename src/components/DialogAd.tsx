@@ -1,3 +1,4 @@
+
 "use client";
 
 import { X } from "lucide-react";
@@ -10,6 +11,7 @@ interface DialogAdProps {
 }
 
 export default function DialogAd({ isOpen, onClose }: DialogAdProps) {
+  return null;
   // Prevent scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -43,3 +45,4 @@ export default function DialogAd({ isOpen, onClose }: DialogAdProps) {
     </div>
   );
 }
+
