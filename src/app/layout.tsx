@@ -100,13 +100,14 @@ export default function RootLayout({
 				<link rel='shortcut icon' href='/favicon.ico' />
 			</head>
 			<body
-				className={`${inter.className} bg-gradient-to-br from-slate-900 to-slate-300`}
-				suppressHydrationWarning>
-				<div className='min-h-screen bg-slate-900 max-w-md mx-auto relative'>
-					{children}
-				</div>
-
+			className={`${inter.className} bg-gradient-to-br from-slate-900 to-slate-300`}
+			suppressHydrationWarning>
+			<div className='min-h-screen bg-slate-900 max-w-md mx-auto relative pb-20'>
+				{children}
+				
+				{/* Move sticky ad inside the container */}
 				<StickyAd position="bottom" responsive={true} />
+			</div>
 			</body>
 		</html>
 	);
