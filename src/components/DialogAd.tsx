@@ -1,9 +1,8 @@
-
 "use client";
 
 import { X } from "lucide-react";
 import { useEffect } from "react";
-// import Popupnative from "@/components/popupnative";
+import Popupnative from "@/components/popupnative";
 
 interface DialogAdProps {
   isOpen: boolean;
@@ -11,7 +10,6 @@ interface DialogAdProps {
 }
 
 export default function DialogAd({ isOpen, onClose }: DialogAdProps) {
-  return null;
   // Prevent scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -27,10 +25,10 @@ export default function DialogAd({ isOpen, onClose }: DialogAdProps) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
       
-      {/* 1. Main Container: Fixed 300x250 size to match the ad */}
-      <div className="relative w-[300px] h-[250px] bg-black/20 rounded-2xl shadow-2xl flex items-center justify-center">
+      {/* Main Container: Fixed 300x250 size to match the ad */}
+      <div className="relative w-[300px] min-h-[250px] bg-slate-800/50 rounded-2xl shadow-2xl flex items-center justify-center p-4">
         
-        {/* 2. Close Button */}
+        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute -top-4 -right-4 p-2 bg-slate-800 text-white rounded-full hover:bg-slate-700 border border-slate-600 shadow-lg transition-colors z-20"
@@ -38,11 +36,10 @@ export default function DialogAd({ isOpen, onClose }: DialogAdProps) {
           <X className="w-5 h-5" />
         </button>
 
-        {/* 3. Content: Directly render the ad component without extra padding/wrappers */}
-        {/* <Popupnative /> */}
+        {/* Content: Ad component */}
+        <Popupnative />
         
       </div>
     </div>
   );
 }
-
