@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, XCircle } from "lucide-react";
 import AdSenseBanner from "@/components/adSenseBanner";
 import DialogAd from "@/components/DialogAd";
-import FullscreenAd from "@/components/fullScreen";
+// import FullscreenAd from "@/components/fullScreen";
 
 
 const demoQuestions = [
@@ -145,7 +145,7 @@ export default function WelcomePage() {
    // 2. ADD STATE FOR THE fullscreen AD
 	// const [showFullscreenAd, setShowFullscreenAd] = useState(false);
 	
-    const [fullscreenTriggered, setFullscreenTriggered] = useState(false);
+    // const [fullscreenTriggered, setFullscreenTriggered] = useState(false);
 
 
 	useEffect(() => {
