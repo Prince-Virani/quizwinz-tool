@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 
-// Define strict types locally
 interface IGoogletag {
   cmd: Array<() => void>;
   defineOutOfPageSlot: (
@@ -21,9 +20,13 @@ interface IGoogletag {
   };
   enableServices: () => void;
   display: (slot: unknown) => void;
+  destroySlots: (slots?: unknown[]) => void;
 }
 
 const SESSION_KEY = "quiz_interstitial_shown";
+
+// We use a global set to prevent double-definitions, 
+// but we will manage deletion carefully.
 const initializedSlots = new Set<string>();
 
 export default function FullscreenAd({
@@ -38,29 +41,31 @@ export default function FullscreenAd({
 
   useEffect(() => {
     if (!show) return;
-    
-    // 1. Reset the parent trigger immediately. 
-    // This fixes the "unused var" error AND allows the ad to be triggered again later.
-    onClose();
+
+    // 1. DO NOT call onClose() immediately here.
+    // It kills the component too fast.
 
     if (isAdLoaded.current) return;
     if (typeof window === "undefined") return;
-    
-    // Check Session (Don't show if already shown this session)
-    if (sessionStorage.getItem(SESSION_KEY)) return;
 
-    // Initialize GPT
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // Optional: Comment this out if you want to test the ad repeatedly 
+    // without closing/reopening the browser.
+   /* if (sessionStorage.getItem(SESSION_KEY)) {
+        // If already shown, just close the trigger and exit
+        onClose();
+        return;
+    } */
+
     const googletag = (window.googletag = window.googletag || { cmd: [] }) as unknown as IGoogletag;
 
     googletag.cmd.push(() => {
-      // Safety Check
-      if (!googletag.defineOutOfPageSlot) return;
+      // Prevent duplicate definition attempts in the same "session"
+      if (initializedSlots.has(adUnitPath)) {
+          // If we already defined it, just try to display it again (or refresh)
+          // But for Interstitials, it's safer to just let it be.
+          return;
+      }
 
-      // Prevent defining the same slot twice
-      if (initializedSlots.has(adUnitPath)) return;
-
-      // Define the Out-of-Page Interstitial Slot
       const slot = googletag.defineOutOfPageSlot(
         adUnitPath,
         googletag.enums.OutOfPageFormat.INTERSTITIAL
@@ -71,9 +76,9 @@ export default function FullscreenAd({
         if (pubads) {
           slot.addService(pubads);
           
-          // Mark as shown when loaded
           pubads.addEventListener?.("slotOnload", () => {
              sessionStorage.setItem(SESSION_KEY, "1");
+             console.log("Interstitial Loaded");
           });
         }
       }
@@ -85,13 +90,28 @@ export default function FullscreenAd({
 
       if (slot) {
         googletag.display(slot);
+        initializedSlots.add(adUnitPath);
+        isAdLoaded.current = true;
       }
-
-      initializedSlots.add(adUnitPath);
-      isAdLoaded.current = true;
     });
 
-  }, [show, onClose]); // Added onClose to dependency array
+    // 2. DELAY THE RESET
+    // We wait 1 second before turning off the 'trigger'. 
+    // This gives the script time to run without killing the slot.
+    const timer = setTimeout(() => {
+        onClose();
+    }, 1000);
+
+    // 3. CLEANUP
+    return () => {
+        clearTimeout(timer);
+        // CRITICAL FIX: We DO NOT call destroySlots([slot]) here.
+        // If we destroy it, the ad overlay might disappear or fail to render.
+        // We only remove it from our "initialized" tracker so we can try again next time if needed.
+        initializedSlots.delete(adUnitPath);
+        isAdLoaded.current = false;
+    };
+  }, [show, onClose]);
 
   return null;
 }
