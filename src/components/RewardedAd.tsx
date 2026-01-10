@@ -3,16 +3,17 @@
 import { useEffect, useRef } from "react";
 
 // 1. Strict Type Definitions for Rewarded Ads
+interface ISlot {
+  addService: (service: unknown) => void;
+  getSlotElementId: () => string;
+}
+
 interface IGoogletag {
   cmd: Array<() => void>;
   defineOutOfPageSlot: (
     adUnitPath: string,
     format: number
-  ) => { 
-      addService: (service: unknown) => void;
-      // We need to keep track of the slot object for refreshing
-      getSlotElementId: () => string; 
-  } | null;
+  ) => ISlot | null;
   enums: {
     OutOfPageFormat: {
       REWARDED: number;
@@ -21,7 +22,6 @@ interface IGoogletag {
   pubads: () => {
     enableSingleRequest?: () => void;
     collapseEmptyDivs?: () => void;
-    // Fix: Use 'unknown' instead of 'any' to satisfy strict linting
     addEventListener: (
       event: string, 
       callback: (event: unknown) => void
@@ -30,8 +30,8 @@ interface IGoogletag {
       event: string, 
       callback: (event: unknown) => void
     ) => void;
-    refresh: (slots?: any[]) => void;
-    clear: (slots?: any[]) => void;
+    refresh: (slots?: ISlot[]) => void;
+    clear: (slots?: ISlot[]) => void;
   };
   enableServices: () => void;
   display: (slot: unknown) => void;
@@ -39,7 +39,7 @@ interface IGoogletag {
 }
 
 // Global storage to keep track of the actual SLOT OBJECTS, not just strings
-const definedSlots = new Map<string, any>();
+const definedSlots = new Map<string, ISlot>();
 
 interface RewardedAdProps {
   show: boolean;
@@ -79,13 +79,13 @@ export default function RewardedAd({ show, onReward, onClose }: RewardedAdProps)
       if (!slot) {
         // --- CREATE NEW SLOT (First Time Only) ---
         if (googletag.defineOutOfPageSlot) {
-            slot = googletag.defineOutOfPageSlot(
+            const newSlot = googletag.defineOutOfPageSlot(
                 adUnitPath,
                 googletag.enums.OutOfPageFormat.REWARDED
             );
 
-            if (slot) {
-                slot.addService(pubads);
+            if (newSlot) {
+                newSlot.addService(pubads);
                 
                 // 2. LISTEN FOR REWARD GRANTED
                 // We use 'unknown' for the event to pass linting
@@ -95,10 +95,11 @@ export default function RewardedAd({ show, onReward, onClose }: RewardedAdProps)
                 });
 
                 googletag.enableServices();
-                googletag.display(slot);
+                googletag.display(newSlot);
 
                 // Store it globally so we don't redefine it next time
-                definedSlots.set(adUnitPath, slot);
+                definedSlots.set(adUnitPath, newSlot);
+                slot = newSlot;
             }
         }
       } else {
