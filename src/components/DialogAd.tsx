@@ -26,7 +26,7 @@ export default function DialogAd({ isOpen, onClose }: DialogAdProps) {
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
       
       {/* Main Container: Fixed 300x250 size to match the ad */}
-      <div className="relative w-[300px] min-h-[250px] bg-slate-800/50 rounded-2xl shadow-2xl flex items-center justify-center p-4">
+      <div className="relative w-[350px] min-h-[300px] bg-slate-800/50 rounded-2xl shadow-2xl flex items-center justify-center p-4">
         
         {/* Close Button */}
         <button
