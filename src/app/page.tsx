@@ -84,9 +84,9 @@ const demoQuestions = [
     {
         id: 11,
         question: "What is the boiling point of water at sea level?",
-        options: ["90°C", "100°C", "110°C", "120°C"],
+        options: ["90Â°C", "100Â°C", "110Â°C", "120Â°C"],
         correct: 1,
-        funFact: "Water boils at 100°C (212°F) at standard atmospheric pressure.",
+        funFact: "Water boils at 100Â°C (212Â°F) at standard atmospheric pressure.",
     },
     {
         id: 12,
@@ -119,6 +119,9 @@ export default function WelcomePage() {
     // Google Interstitial state
     const [triggerInterstitial, setTriggerInterstitial] = useState(false);
 
+    // Timeout tracker for ad fallback
+    const [adTimeoutId, setAdTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
     const router = useRouter();
 
     const handleContinue = () => {
@@ -128,13 +131,28 @@ export default function WelcomePage() {
     const handleClaimClick = () => {
         // 1. Trigger the ad component
         setShowAd(true);
+
+        // 2. Set a fallback timeout in case ad doesn't load/complete
+        // If no reward is granted within 5 seconds, proceed anyway
+        const timeout = setTimeout(() => {
+            console.log("Ad timeout - proceeding without reward confirmation");
+            handleRewardGiven();
+            setShowAd(false);
+        }, 5000);
+
+        setAdTimeoutId(timeout);
     };
 
     const handleRewardGiven = () => {
+        // Clear the timeout if reward was granted before timeout
+        if (adTimeoutId) {
+            clearTimeout(adTimeoutId);
+            setAdTimeoutId(null);
+        }
+        
         // 3. User watched the ad, give coins/navigate
         console.log("User earned reward!");
-        // We now call handleContinue here to fix the unused variable error
-        handleContinue(); 
+        handleContinue();
     };
 
     useEffect(() => {
