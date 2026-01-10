@@ -9,84 +9,61 @@ import AdSenseBanner from "@/components/adSenseBanner";
 import DialogAd from "@/components/DialogAd";
 import FullscreenAd from "@/components/fullScreen";
 import RewardedAd from "@/components/RewardedAd";
+
 const demoQuestions = [
     {
         id: 1,
-        question:
-            "Which actress won the Academy Award for Best Actress in 2020?",
-        options: [
-            "Renee Zellweger",
-            "Scarlett Johansson",
-            "Charlize Theron",
-            "Natalie Portman",
-        ],
+        question: "Which actress won the Academy Award for Best Actress in 2020?",
+        options: ["Renee Zellweger", "Scarlett Johansson", "Charlize Theron", "Natalie Portman"],
         correct: 0,
-        funFact:
-            "Renee Zellweger won for her role as Judy Garland in 'Judy', marking her second Academy Award win.",
+        funFact: "Renee Zellweger won for her role as Judy Garland in 'Judy', marking her second Academy Award win.",
     },
     {
         id: 2,
-        question:
-            "Who holds the record for most successful captain in IPL history?",
+        question: "Who holds the record for most successful captain in IPL history?",
         options: ["Virat Kohli", "MS Dhoni", "Rohit Sharma", "Gautam Gambhir"],
         correct: 1,
-        funFact:
-            "MS Dhoni has led Chennai Super Kings to multiple IPL titles, making him the most successful captain in IPL history.",
+        funFact: "MS Dhoni has led Chennai Super Kings to multiple IPL titles, making him the most successful captain in IPL history.",
     },
     {
         id: 3,
         question: "What is the capital of France?",
         options: ["Berlin", "Madrid", "Paris", "Rome"],
         correct: 2,
-        funFact:
-            "Paris is known as the 'City of Light' and is famous for its art, fashion, and culture.",
+        funFact: "Paris is known as the 'City of Light' and is famous for its art, fashion, and culture.",
     },
     {
         id: 4,
         question: "Which planet is known as the Red Planet?",
         options: ["Earth", "Mars", "Jupiter", "Venus"],
         correct: 1,
-        funFact:
-            "Mars is called the Red Planet due to its reddish appearance, caused by iron oxide on its surface.",
+        funFact: "Mars is called the Red Planet due to its reddish appearance, caused by iron oxide on its surface.",
     },
     {
         id: 5,
         question: "Who wrote the play 'Romeo and Juliet'?",
-        options: [
-            "William Shakespeare",
-            "Charles Dickens",
-            "Jane Austen",
-            "Mark Twain",
-        ],
+        options: ["William Shakespeare", "Charles Dickens", "Jane Austen", "Mark Twain"],
         correct: 0,
-        funFact:
-            "'Romeo and Juliet' is one of Shakespeare's most famous tragedies.",
+        funFact: "'Romeo and Juliet' is one of Shakespeare's most famous tragedies.",
     },
     {
         id: 6,
         question: "What is the largest mammal in the world?",
         options: ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
         correct: 1,
-        funFact:
-            "The blue whale can weigh up to 200 tons and is the largest animal ever known to have existed.",
+        funFact: "The blue whale can weigh up to 200 tons and is the largest animal ever known to have existed.",
     },
     {
         id: 7,
         question: "Which element has the chemical symbol 'O'?",
         options: ["Gold", "Oxygen", "Osmium", "Oganesson"],
         correct: 1,
-        funFact:
-            "Oxygen is essential for respiration in most living organisms.",
+        funFact: "Oxygen is essential for respiration in most living organisms.",
     },
     {
         id: 8,
         question: "Who painted the Mona Lisa?",
-        options: [
-            "Vincent van Gogh",
-            "Pablo Picasso",
-            "Leonardo da Vinci",
-            "Claude Monet",
-        ],
+        options: ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Claude Monet"],
         correct: 2,
         funFact: "The Mona Lisa is displayed at the Louvre Museum in Paris.",
     },
@@ -102,24 +79,21 @@ const demoQuestions = [
         question: "Which country is known as the Land of the Rising Sun?",
         options: ["China", "Japan", "Thailand", "South Korea"],
         correct: 1,
-        funFact:
-            "Japan is called the Land of the Rising Sun because the sun rises in the east, and Japan is east of China.",
+        funFact: "Japan is called the Land of the Rising Sun because the sun rises in the east, and Japan is east of China.",
     },
     {
         id: 11,
         question: "What is the boiling point of water at sea level?",
         options: ["90°C", "100°C", "110°C", "120°C"],
         correct: 1,
-        funFact:
-            "Water boils at 100°C (212°F) at standard atmospheric pressure.",
+        funFact: "Water boils at 100°C (212°F) at standard atmospheric pressure.",
     },
     {
         id: 12,
         question: "Who is known as the Father of Computers?",
         options: ["Alan Turing", "Charles Babbage", "Bill Gates", "Steve Jobs"],
         correct: 1,
-        funFact:
-            "Charles Babbage designed the first mechanical computer, the Analytical Engine.",
+        funFact: "Charles Babbage designed the first mechanical computer, the Analytical Engine.",
     },
 ];
 
@@ -139,24 +113,29 @@ export default function WelcomePage() {
     // State for existing dialog ad
     const [isAdOpen, setIsAdOpen] = useState(false);
 
-    //reward
+    // reward ad state
     const [showAd, setShowAd] = useState(false);
 
-    const handleClaimClick = () => {
-            // 1. Trigger the ad component
-            setShowAd(true);
-        };
-    const handleRewardGiven = () => {
-                // 3. User watched the ad, give coins/navigate
-                console.log("User earned reward!");
-                router.push('/next-level'); // or add coins
-            };
-
-
-    // State for Google Interstitial
+    // Google Interstitial state
     const [triggerInterstitial, setTriggerInterstitial] = useState(false);
 
     const router = useRouter();
+
+    const handleContinue = () => {
+        router.push("/result");
+    };
+
+    const handleClaimClick = () => {
+        // 1. Trigger the ad component
+        setShowAd(true);
+    };
+
+    const handleRewardGiven = () => {
+        // 3. User watched the ad, give coins/navigate
+        console.log("User earned reward!");
+        // We now call handleContinue here to fix the unused variable error
+        handleContinue(); 
+    };
 
     useEffect(() => {
         setRandomQuestions(getRandomQuestions(demoQuestions, 2));
@@ -168,7 +147,6 @@ export default function WelcomePage() {
         return () => clearTimeout(adTimer);
     }, []);
 
-    // MODIFIED HANDLER to accept the event (e)
     const handleAnswerSelect = (e: React.MouseEvent<HTMLAnchorElement>, answerIndex: number) => {
         e.preventDefault(); // Prevent standard link navigation
         
@@ -198,10 +176,6 @@ export default function WelcomePage() {
                 }
             }, 2000);
         }
-    };
-
-    const handleContinue = () => {
-        router.push("/result");
     };
 
     if (showReward) {
