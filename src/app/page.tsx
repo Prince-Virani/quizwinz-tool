@@ -8,7 +8,7 @@ import { CheckCircle, XCircle } from "lucide-react";
 import AdSenseBanner from "@/components/adSenseBanner";
 import DialogAd from "@/components/DialogAd";
 import FullscreenAd from "@/components/fullScreen";
-
+import RewardedAd from "@/components/RewardedAd";
 const demoQuestions = [
     {
         id: 1,
@@ -139,6 +139,20 @@ export default function WelcomePage() {
     // State for existing dialog ad
     const [isAdOpen, setIsAdOpen] = useState(false);
 
+    //reward
+    const [showAd, setShowAd] = useState(false);
+
+    const handleClaimClick = () => {
+            // 1. Trigger the ad component
+            setShowAd(true);
+        };
+    const handleRewardGiven = () => {
+                // 3. User watched the ad, give coins/navigate
+                console.log("User earned reward!");
+                router.push('/next-level'); // or add coins
+            };
+
+
     // State for Google Interstitial
     const [triggerInterstitial, setTriggerInterstitial] = useState(false);
 
@@ -202,9 +216,14 @@ export default function WelcomePage() {
                                 <p className='text-2xl font-bold'>Get Instant 100 Coins!</p>
                             </div>
                         </div>
-                        <Button onClick={handleContinue} className='w-full bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 hover:from-orange-500'>
+                        <Button onClick={handleClaimClick} className='w-full bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 hover:from-orange-500'>
                             Claim
                         </Button>
+                        <RewardedAd 
+                            show={showAd} 
+                            onReward={handleRewardGiven} 
+                            onClose={() => setShowAd(false)} 
+                        />
                     </CardContent>
                 </Card>
             </div>
