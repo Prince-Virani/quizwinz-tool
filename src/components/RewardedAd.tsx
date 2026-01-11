@@ -26,13 +26,14 @@ interface IGoogletag {
     };
   };
   pubads: () => {
+    // UPDATED: Changed 'any' to 'unknown' to fix linting errors
     addEventListener: (
       event: string, 
-      callback: (event: any) => void
+      callback: (event: unknown) => void 
     ) => void;
     removeEventListener: (
       event: string, 
-      callback: (event: any) => void
+      callback: (event: unknown) => void
     ) => void;
     refresh: (slots?: ISlot[]) => void;
     clear: (slots?: ISlot[]) => void;
@@ -48,7 +49,7 @@ interface RewardedAdProps {
   show: boolean;
   onReward: () => void;
   onClose: () => void;
-  onAdShown: () => void; // New prop to cancel the fallback timer
+  onAdShown: () => void; 
 }
 
 export default function RewardedAd({ show, onReward, onClose, onAdShown }: RewardedAdProps) {
@@ -84,15 +85,15 @@ export default function RewardedAd({ show, onReward, onClose, onAdShown }: Rewar
                 newSlot.addService(pubads);
 
                 // --- EVENT 1: AD IS READY TO SHOW ---
-                // This fixes the "Missing required event listener" error
-                pubads.addEventListener("rewardedSlotReady", (event: IRewardedEvent) => {
+                pubads.addEventListener("rewardedSlotReady", (event: unknown) => {
+                    const rewardedEvent = event as IRewardedEvent;
                     console.log("Ad ready. Triggering visibility...");
                     
                     // 1. Tell parent to stop the 5s fallback timer
                     onAdShown();
 
                     // 2. Show the ad
-                    event.makeRewardedVisible();
+                    rewardedEvent.makeRewardedVisible();
                 });
 
                 // --- EVENT 2: USER EARNED REWARD ---
@@ -104,8 +105,6 @@ export default function RewardedAd({ show, onReward, onClose, onAdShown }: Rewar
                 // --- EVENT 3: AD CLOSED (X Button) ---
                 pubads.addEventListener("rewardedSlotClosed", () => {
                     console.log("Ad closed by user.");
-                    // Optional: You can force close here if needed, but usually 
-                    // we wait for the logic in the parent to handle state.
                 });
 
                 googletag.enableServices();
@@ -117,16 +116,11 @@ export default function RewardedAd({ show, onReward, onClose, onAdShown }: Rewar
         }
       } else {
         // --- REFRESH EXISTING SLOT ---
-        // If the user plays a second time, we refresh the existing slot
         console.log("Refreshing existing rewarded slot...");
         pubads.refresh([slot]);
       }
       
       processingRef.current = false;
-      
-      // NOTE: We do NOT call onClose() here immediately. 
-      // We let the ad events (Granted/Closed) drive the flow, 
-      // or the parent handles the state closing.
     });
 
   }, [show, onClose, onReward, onAdShown]);

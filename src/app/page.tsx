@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image"; // IMPORT ADDED
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, XCircle } from "lucide-react";
@@ -125,11 +126,8 @@ export default function WelcomePage() {
     };
 
     const handleClaimClick = () => {
-        // 1. Trigger the ad component
         setShowAd(true);
 
-        // 2. Set a fallback timeout. 
-        // If ad doesn't load/start within 5 seconds, we give reward anyway so user isn't stuck.
         const timeout = setTimeout(() => {
             console.log("Ad load timeout - granting reward as fallback");
             handleRewardGiven();
@@ -139,7 +137,6 @@ export default function WelcomePage() {
         setAdTimeoutId(timeout);
     };
 
-    // NEW: Called by RewardedAd.tsx when the video actually starts playing
     const handleAdShown = () => {
         if (adTimeoutId) {
             console.log("Ad started successfully - cancelling fallback timer");
@@ -149,23 +146,16 @@ export default function WelcomePage() {
     };
 
     const handleRewardGiven = () => {
-        // Clear the timeout if it exists (e.g. reward granted very quickly)
         if (adTimeoutId) {
             clearTimeout(adTimeoutId);
             setAdTimeoutId(null);
         }
         
         console.log("User earned reward!");
-        
-        // Logic to save coins
-        // const currentCoins = Number.parseInt(localStorage.getItem("quizwinz-coins") || "0");
-        // localStorage.setItem("quizwinz-coins", (currentCoins + reward).toString());
-
         handleContinue();
     };
 
     useEffect(() => {
-        // Ensure client-side only randomization
         setRandomQuestions(getRandomQuestions(demoQuestions, 2));
         
         const adTimer = setTimeout(() => {
@@ -178,7 +168,6 @@ export default function WelcomePage() {
     const handleAnswerSelect = (e: React.MouseEvent<HTMLAnchorElement>, answerIndex: number) => {
         e.preventDefault(); 
         
-        // Trigger Interstitial on answer click
         setTriggerInterstitial(true);
 
         if (!showResult) {
@@ -214,7 +203,14 @@ export default function WelcomePage() {
                 <Card className='w-full max-w-md bg-slate-800 border-slate-700'>
                     <CardContent className='p-8 text-center'>
                         <div className='mb-6'>
-                            <img src='/coin.png' className='w-20 h-20 animate-pulse mx-auto mb-4' alt='coin' />
+                            {/* UPDATED: Replaced img with Next.js Image */}
+                            <Image 
+                                src='/coin.png' 
+                                width={80} 
+                                height={80} 
+                                className='animate-pulse mx-auto mb-4' 
+                                alt='coin' 
+                            />
                             <h2 className='text-2xl font-bold text-white mb-2'>New Reward Available!</h2>
                             <div className='bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 rounded-lg p-4 mb-4'>
                                 <p className='text-2xl font-bold'>Get Instant 100 Coins!</p>
@@ -224,7 +220,6 @@ export default function WelcomePage() {
                             Claim
                         </Button>
                         
-                        {/* REWARD AD COMPONENT */}
                         <RewardedAd 
                             show={showAd} 
                             onReward={handleRewardGiven} 
@@ -272,7 +267,6 @@ export default function WelcomePage() {
                         <h2 className='text-lg font-semibold text-white mb-4 text-center'>{question.question}</h2>
                     </div>
 
-                    {/* Options Grid */}
                     <div className='grid grid-cols-2 gap-3 mb-6'>
                         {question.options.map((option, index) => (
                             <a
