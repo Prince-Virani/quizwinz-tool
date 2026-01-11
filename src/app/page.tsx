@@ -84,9 +84,9 @@ const demoQuestions = [
     {
         id: 11,
         question: "What is the boiling point of water at sea level?",
-        options: ["90Â°C", "100Â°C", "110Â°C", "120Â°C"],
+        options: ["90°C", "100°C", "110°C", "120°C"],
         correct: 1,
-        funFact: "Water boils at 100Â°C (212Â°F) at standard atmospheric pressure.",
+        funFact: "Water boils at 100°C (212°F) at standard atmospheric pressure.",
     },
     {
         id: 12,
@@ -108,19 +108,15 @@ export default function WelcomePage() {
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
     const [showResult, setShowResult] = useState(false);
     const [answers, setAnswers] = useState<number[]>([]);
-    const [showReward, setShowReward] = useState(false);
     
-    // State for existing dialog ad
-    const [isAdOpen, setIsAdOpen] = useState(false);
-
-    // reward ad state
+    // Reward states
+    const [showReward, setShowReward] = useState(false);
     const [showAd, setShowAd] = useState(false);
-
-    // Google Interstitial state
-    const [triggerInterstitial, setTriggerInterstitial] = useState(false);
-
-    // Timeout tracker for ad fallback
     const [adTimeoutId, setAdTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
+    // Other Ad states
+    const [isAdOpen, setIsAdOpen] = useState(false);
+    const [triggerInterstitial, setTriggerInterstitial] = useState(false);
 
     const router = useRouter();
 
@@ -132,10 +128,10 @@ export default function WelcomePage() {
         // 1. Trigger the ad component
         setShowAd(true);
 
-        // 2. Set a fallback timeout in case ad doesn't load/complete
-        // If no reward is granted within 5 seconds, proceed anyway
+        // 2. Set a fallback timeout. 
+        // If ad doesn't load/start within 5 seconds, we give reward anyway so user isn't stuck.
         const timeout = setTimeout(() => {
-            console.log("Ad timeout - proceeding without reward confirmation");
+            console.log("Ad load timeout - granting reward as fallback");
             handleRewardGiven();
             setShowAd(false);
         }, 5000);
@@ -143,19 +139,33 @@ export default function WelcomePage() {
         setAdTimeoutId(timeout);
     };
 
+    // NEW: Called by RewardedAd.tsx when the video actually starts playing
+    const handleAdShown = () => {
+        if (adTimeoutId) {
+            console.log("Ad started successfully - cancelling fallback timer");
+            clearTimeout(adTimeoutId);
+            setAdTimeoutId(null);
+        }
+    };
+
     const handleRewardGiven = () => {
-        // Clear the timeout if reward was granted before timeout
+        // Clear the timeout if it exists (e.g. reward granted very quickly)
         if (adTimeoutId) {
             clearTimeout(adTimeoutId);
             setAdTimeoutId(null);
         }
         
-        // 3. User watched the ad, give coins/navigate
         console.log("User earned reward!");
+        
+        // Logic to save coins
+        // const currentCoins = Number.parseInt(localStorage.getItem("quizwinz-coins") || "0");
+        // localStorage.setItem("quizwinz-coins", (currentCoins + reward).toString());
+
         handleContinue();
     };
 
     useEffect(() => {
+        // Ensure client-side only randomization
         setRandomQuestions(getRandomQuestions(demoQuestions, 2));
         
         const adTimer = setTimeout(() => {
@@ -166,9 +176,9 @@ export default function WelcomePage() {
     }, []);
 
     const handleAnswerSelect = (e: React.MouseEvent<HTMLAnchorElement>, answerIndex: number) => {
-        e.preventDefault(); // Prevent standard link navigation
+        e.preventDefault(); 
         
-        // Trigger Interstitial
+        // Trigger Interstitial on answer click
         setTriggerInterstitial(true);
 
         if (!showResult) {
@@ -187,9 +197,11 @@ export default function WelcomePage() {
                     const correctAnswers = newAnswers.filter(
                         (answer, index) => answer === randomQuestions[index].correct
                     ).length;
+                    
                     const reward = correctAnswers * 100 + 100;
                     const currentCoins = Number.parseInt(localStorage.getItem("quizwinz-coins") || "0");
                     localStorage.setItem("quizwinz-coins", (currentCoins + reward).toString());
+                    
                     setShowReward(true);
                 }
             }, 2000);
@@ -211,10 +223,13 @@ export default function WelcomePage() {
                         <Button onClick={handleClaimClick} className='w-full bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 hover:from-orange-500'>
                             Claim
                         </Button>
+                        
+                        {/* REWARD AD COMPONENT */}
                         <RewardedAd 
                             show={showAd} 
                             onReward={handleRewardGiven} 
-                            onClose={() => setShowAd(false)} 
+                            onClose={() => setShowAd(false)}
+                            onAdShown={handleAdShown}
                         />
                     </CardContent>
                 </Card>

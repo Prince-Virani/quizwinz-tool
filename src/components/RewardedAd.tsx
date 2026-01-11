@@ -2,10 +2,16 @@
 
 import { useEffect, useRef } from "react";
 
-// 1. Strict Type Definitions for Rewarded Ads
+// --- STRICT TYPE DEFINITIONS ---
 interface ISlot {
   addService: (service: unknown) => void;
   getSlotElementId: () => string;
+}
+
+// Interface for the specific event that controls visibility
+interface IRewardedEvent {
+  makeRewardedVisible: () => void;
+  slot: ISlot;
 }
 
 interface IGoogletag {
@@ -20,35 +26,32 @@ interface IGoogletag {
     };
   };
   pubads: () => {
-    enableSingleRequest?: () => void;
-    collapseEmptyDivs?: () => void;
     addEventListener: (
       event: string, 
-      callback: (event: unknown) => void
+      callback: (event: any) => void
     ) => void;
     removeEventListener: (
       event: string, 
-      callback: (event: unknown) => void
+      callback: (event: any) => void
     ) => void;
     refresh: (slots?: ISlot[]) => void;
     clear: (slots?: ISlot[]) => void;
   };
   enableServices: () => void;
   display: (slot: unknown) => void;
-  destroySlots: (slots?: unknown[]) => void;
 }
 
-// Global storage to keep track of the actual SLOT OBJECTS, not just strings
+// Global cache to prevent re-defining the same slot
 const definedSlots = new Map<string, ISlot>();
 
 interface RewardedAdProps {
   show: boolean;
-  onReward: () => void;  // Called when user earns the reward
-  onClose: () => void;   // Called to reset the trigger
+  onReward: () => void;
+  onClose: () => void;
+  onAdShown: () => void; // New prop to cancel the fallback timer
 }
 
-export default function RewardedAd({ show, onReward, onClose }: RewardedAdProps) {
-  // REPLACE WITH YOUR ACTUAL REWARDED AD UNIT PATH
+export default function RewardedAd({ show, onReward, onClose, onAdShown }: RewardedAdProps) {
   const adUnitPath = "/23287200353/quiz1reward"; 
   const processingRef = useRef(false);
 
@@ -58,26 +61,19 @@ export default function RewardedAd({ show, onReward, onClose }: RewardedAdProps)
     
     processingRef.current = true;
 
-    // Reset parent trigger immediately
-    // Note: We move onClose to the end of the chain or keep it here depending on flow.
-    // Keeping it here ensures we don't loop, but we need to be careful.
-
     if (typeof window === "undefined") {
         processingRef.current = false;
         return;
     }
 
-    // Initialize GPT
     const googletag = (window.googletag = window.googletag || { cmd: [] }) as unknown as IGoogletag;
 
     googletag.cmd.push(() => {
       const pubads = googletag.pubads();
-      
-      // 1. Check if we already created this slot in a previous click
       let slot = definedSlots.get(adUnitPath);
 
       if (!slot) {
-        // --- CREATE NEW SLOT (First Time Only) ---
+        // --- 1. DEFINE SLOT (First Time Only) ---
         if (googletag.defineOutOfPageSlot) {
             const newSlot = googletag.defineOutOfPageSlot(
                 adUnitPath,
@@ -86,33 +82,54 @@ export default function RewardedAd({ show, onReward, onClose }: RewardedAdProps)
 
             if (newSlot) {
                 newSlot.addService(pubads);
-                
-                // 2. LISTEN FOR REWARD GRANTED
-                // We use 'unknown' for the event to pass linting
+
+                // --- EVENT 1: AD IS READY TO SHOW ---
+                // This fixes the "Missing required event listener" error
+                pubads.addEventListener("rewardedSlotReady", (event: IRewardedEvent) => {
+                    console.log("Ad ready. Triggering visibility...");
+                    
+                    // 1. Tell parent to stop the 5s fallback timer
+                    onAdShown();
+
+                    // 2. Show the ad
+                    event.makeRewardedVisible();
+                });
+
+                // --- EVENT 2: USER EARNED REWARD ---
                 pubads.addEventListener("rewardedSlotGranted", (event: unknown) => {
                     console.log("Reward granted!", event);
                     onReward(); 
                 });
 
+                // --- EVENT 3: AD CLOSED (X Button) ---
+                pubads.addEventListener("rewardedSlotClosed", () => {
+                    console.log("Ad closed by user.");
+                    // Optional: You can force close here if needed, but usually 
+                    // we wait for the logic in the parent to handle state.
+                });
+
                 googletag.enableServices();
                 googletag.display(newSlot);
 
-                // Store it globally so we don't redefine it next time
                 definedSlots.set(adUnitPath, newSlot);
                 slot = newSlot;
             }
         }
       } else {
-        // --- SLOT EXISTS, REFRESH IT ---
-        // If the user plays a second time, we request a new ad for the existing slot.
+        // --- REFRESH EXISTING SLOT ---
+        // If the user plays a second time, we refresh the existing slot
+        console.log("Refreshing existing rewarded slot...");
         pubads.refresh([slot]);
       }
       
       processingRef.current = false;
-      onClose(); 
+      
+      // NOTE: We do NOT call onClose() here immediately. 
+      // We let the ad events (Granted/Closed) drive the flow, 
+      // or the parent handles the state closing.
     });
 
-  }, [show, onClose, onReward]);
+  }, [show, onClose, onReward, onAdShown]);
 
   return null;
 }
