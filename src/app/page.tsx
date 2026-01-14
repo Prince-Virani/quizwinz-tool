@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image"; // IMPORT ADDED
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, XCircle } from "lucide-react";
@@ -85,9 +85,9 @@ const demoQuestions = [
     {
         id: 11,
         question: "What is the boiling point of water at sea level?",
-        options: ["90°C", "100°C", "110°C", "120°C"],
+        options: ["90Â°C", "100Â°C", "110Â°C", "120Â°C"],
         correct: 1,
-        funFact: "Water boils at 100°C (212°F) at standard atmospheric pressure.",
+        funFact: "Water boils at 100Â°C (212Â°F) at standard atmospheric pressure.",
     },
     {
         id: 12,
@@ -114,6 +114,7 @@ export default function WelcomePage() {
     const [showReward, setShowReward] = useState(false);
     const [showAd, setShowAd] = useState(false);
     const [adTimeoutId, setAdTimeoutId] = useState<NodeJS.Timeout | null>(null);
+    const [isClaimDisabled, setIsClaimDisabled] = useState(false);
 
     // Other Ad states
     const [isAdOpen, setIsAdOpen] = useState(false);
@@ -126,33 +127,51 @@ export default function WelcomePage() {
     };
 
     const handleClaimClick = () => {
+        if (isClaimDisabled) return;
+        
+        setIsClaimDisabled(true);
         setShowAd(true);
 
+        // Fallback timeout: if ad doesn't complete in 6 seconds, proceed anyway
         const timeout = setTimeout(() => {
-            console.log("Ad load timeout - granting reward as fallback");
+            console.log("Ad timeout - granting reward as fallback");
             handleRewardGiven();
-            setShowAd(false);
-        }, 5000);
+        }, 6000);
 
         setAdTimeoutId(timeout);
     };
 
     const handleAdShown = () => {
+        // Ad is ready, clear the timeout
         if (adTimeoutId) {
-            console.log("Ad started successfully - cancelling fallback timer");
+            console.log("Ad loaded - clearing fallback timer");
             clearTimeout(adTimeoutId);
             setAdTimeoutId(null);
         }
     };
 
     const handleRewardGiven = () => {
+        // Clear any remaining timeout
         if (adTimeoutId) {
             clearTimeout(adTimeoutId);
             setAdTimeoutId(null);
         }
         
         console.log("User earned reward!");
+        setShowAd(false);
+        setIsClaimDisabled(false);
         handleContinue();
+    };
+
+    const handleAdClosed = () => {
+        setShowAd(false);
+        setIsClaimDisabled(false);
+        
+        // Clear timeout if still pending
+        if (adTimeoutId) {
+            clearTimeout(adTimeoutId);
+            setAdTimeoutId(null);
+        }
     };
 
     useEffect(() => {
@@ -203,7 +222,6 @@ export default function WelcomePage() {
                 <Card className='w-full max-w-md bg-slate-800 border-slate-700'>
                     <CardContent className='p-8 text-center'>
                         <div className='mb-6'>
-                            {/* UPDATED: Replaced img with Next.js Image */}
                             <Image 
                                 src='/coin.png' 
                                 width={80} 
@@ -216,14 +234,17 @@ export default function WelcomePage() {
                                 <p className='text-2xl font-bold'>Get Instant 100 Coins!</p>
                             </div>
                         </div>
-                        <Button onClick={handleClaimClick} className='w-full bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 hover:from-orange-500'>
-                            Claim
+                        <Button 
+                            onClick={handleClaimClick} 
+                            disabled={isClaimDisabled}
+                            className='w-full bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 hover:from-orange-500 disabled:opacity-50 disabled:cursor-not-allowed'>
+                            {isClaimDisabled ? 'Loading Ad...' : 'Claim'}
                         </Button>
                         
                         <RewardedAd 
                             show={showAd} 
                             onReward={handleRewardGiven} 
-                            onClose={() => setShowAd(false)}
+                            onClose={handleAdClosed}
                             onAdShown={handleAdShown}
                         />
                     </CardContent>

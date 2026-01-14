@@ -8,7 +8,6 @@ interface ISlot {
   getSlotElementId: () => string;
 }
 
-// Interface for the specific event that controls visibility
 interface IRewardedEvent {
   makeRewardedVisible: () => void;
   slot: ISlot;
@@ -26,7 +25,6 @@ interface IGoogletag {
     };
   };
   pubads: () => {
-    // UPDATED: Changed 'any' to 'unknown' to fix linting errors
     addEventListener: (
       event: string, 
       callback: (event: unknown) => void 
@@ -44,6 +42,7 @@ interface IGoogletag {
 
 // Global cache to prevent re-defining the same slot
 const definedSlots = new Map<string, ISlot>();
+let isServicesEnabled = false;
 
 interface RewardedAdProps {
   show: boolean;
@@ -55,6 +54,7 @@ interface RewardedAdProps {
 export default function RewardedAd({ show, onReward, onClose, onAdShown }: RewardedAdProps) {
   const adUnitPath = "/23287200353/quiz1reward"; 
   const processingRef = useRef(false);
+  const listenerCleanupRef = useRef<Array<() => void>>([]);
 
   useEffect(() => {
     if (!show) return;
@@ -85,31 +85,57 @@ export default function RewardedAd({ show, onReward, onClose, onAdShown }: Rewar
                 newSlot.addService(pubads);
 
                 // --- EVENT 1: AD IS READY TO SHOW ---
-                pubads.addEventListener("rewardedSlotReady", (event: unknown) => {
+                const handleRewardedReady = (event: unknown) => {
                     const rewardedEvent = event as IRewardedEvent;
                     console.log("Ad ready. Triggering visibility...");
                     
                     // 1. Tell parent to stop the 5s fallback timer
                     onAdShown();
 
-                    // 2. Show the ad
+                    // 2. Show the ad immediately
                     rewardedEvent.makeRewardedVisible();
-                });
+                };
 
                 // --- EVENT 2: USER EARNED REWARD ---
-                pubads.addEventListener("rewardedSlotGranted", (event: unknown) => {
+                const handleRewardGrant = (event: unknown) => {
                     console.log("Reward granted!", event);
+                    // Clean up listeners
+                    listenerCleanupRef.current.forEach(cleanup => cleanup());
+                    listenerCleanupRef.current = [];
                     onReward(); 
-                });
+                };
 
                 // --- EVENT 3: AD CLOSED (X Button) ---
-                pubads.addEventListener("rewardedSlotClosed", () => {
+                const handleAdClosed = () => {
                     console.log("Ad closed by user.");
+                    // Clean up listeners
+                    listenerCleanupRef.current.forEach(cleanup => cleanup());
+                    listenerCleanupRef.current = [];
+                    onClose();
+                };
+
+                pubads.addEventListener("rewardedSlotReady", handleRewardedReady);
+                pubads.addEventListener("rewardedSlotGranted", handleRewardGrant);
+                pubads.addEventListener("rewardedSlotClosed", handleAdClosed);
+
+                // Store cleanup functions
+                listenerCleanupRef.current.push(() => {
+                    pubads.removeEventListener("rewardedSlotReady", handleRewardedReady);
+                });
+                listenerCleanupRef.current.push(() => {
+                    pubads.removeEventListener("rewardedSlotGranted", handleRewardGrant);
+                });
+                listenerCleanupRef.current.push(() => {
+                    pubads.removeEventListener("rewardedSlotClosed", handleAdClosed);
                 });
 
-                googletag.enableServices();
-                googletag.display(newSlot);
+                // Enable services only once globally
+                if (!isServicesEnabled) {
+                    googletag.enableServices();
+                    isServicesEnabled = true;
+                }
 
+                googletag.display(newSlot);
                 definedSlots.set(adUnitPath, newSlot);
                 slot = newSlot;
             }
@@ -122,6 +148,12 @@ export default function RewardedAd({ show, onReward, onClose, onAdShown }: Rewar
       
       processingRef.current = false;
     });
+
+    // Cleanup on unmount
+    return () => {
+      listenerCleanupRef.current.forEach(cleanup => cleanup());
+      listenerCleanupRef.current = [];
+    };
 
   }, [show, onClose, onReward, onAdShown]);
 
