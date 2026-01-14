@@ -160,10 +160,15 @@ export default function WelcomePage() {
         console.log("User earned reward!");
         setShowAd(false);
         setIsClaimDisabled(false);
-        handleContinue();
+        
+        // Delay navigation slightly to ensure cleanup
+        setTimeout(() => {
+            handleContinue();
+        }, 100);
     };
 
     const handleAdClosed = () => {
+        // Only close ad, don't proceed (user closed without watching)
         setShowAd(false);
         setIsClaimDisabled(false);
         

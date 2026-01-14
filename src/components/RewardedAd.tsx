@@ -55,9 +55,19 @@ export default function RewardedAd({ show, onReward, onClose, onAdShown }: Rewar
   const adUnitPath = "/23287200353/quiz1reward"; 
   const processingRef = useRef(false);
   const listenerCleanupRef = useRef<Array<() => void>>([]);
+  const callbacksRef = useRef({ onReward, onClose, onAdShown });
+
+  // Update callback refs without retriggering effect
+  useEffect(() => {
+    callbacksRef.current = { onReward, onClose, onAdShown };
+  }, [onReward, onClose, onAdShown]);
 
   useEffect(() => {
-    if (!show) return;
+    if (!show) {
+      processingRef.current = false;
+      return;
+    }
+
     if (processingRef.current) return;
     
     processingRef.current = true;
@@ -89,29 +99,39 @@ export default function RewardedAd({ show, onReward, onClose, onAdShown }: Rewar
                     const rewardedEvent = event as IRewardedEvent;
                     console.log("Ad ready. Triggering visibility...");
                     
-                    // 1. Tell parent to stop the 5s fallback timer
-                    onAdShown();
+                    // Tell parent to stop the fallback timer
+                    callbacksRef.current.onAdShown();
 
-                    // 2. Show the ad immediately
+                    // Show the ad immediately
                     rewardedEvent.makeRewardedVisible();
                 };
 
                 // --- EVENT 2: USER EARNED REWARD ---
                 const handleRewardGrant = (event: unknown) => {
                     console.log("Reward granted!", event);
-                    // Clean up listeners
+                    
+                    // Clean up listeners first
                     listenerCleanupRef.current.forEach(cleanup => cleanup());
                     listenerCleanupRef.current = [];
-                    onReward(); 
+                    
+                    processingRef.current = false;
+                    
+                    // Call reward callback
+                    callbacksRef.current.onReward();
                 };
 
-                // --- EVENT 3: AD CLOSED (X Button) ---
+                // --- EVENT 3: AD CLOSED (X Button or timeout) ---
                 const handleAdClosed = () => {
                     console.log("Ad closed by user.");
+                    
                     // Clean up listeners
                     listenerCleanupRef.current.forEach(cleanup => cleanup());
                     listenerCleanupRef.current = [];
-                    onClose();
+                    
+                    processingRef.current = false;
+                    
+                    // Call close callback
+                    callbacksRef.current.onClose();
                 };
 
                 pubads.addEventListener("rewardedSlotReady", handleRewardedReady);
@@ -155,7 +175,7 @@ export default function RewardedAd({ show, onReward, onClose, onAdShown }: Rewar
       listenerCleanupRef.current = [];
     };
 
-  }, [show, onClose, onReward, onAdShown]);
+  }, [show]);
 
   return null;
 }
