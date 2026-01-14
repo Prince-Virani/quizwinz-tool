@@ -1,33 +1,47 @@
 "use client";
 
+import { useState } from "react";
 import { Trophy, Star, Users, Award, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AdSenseBanner from "@/components/adSenseBanner";
+import FullscreenAd from "@/components/fullScreen";
 
 export default function ResultPage() {
 	const router = useRouter();
+	const [triggerInterstitial, setTriggerInterstitial] = useState(false);
 
 	const handlePlayNow = () => {
-		// Handle play now button click
+		// Show interstitial ad before navigating
+		setTriggerInterstitial(true);
+	};
+
+	const handleAdClose = () => {
+		// Ad is closed, now navigate to the next page
+		setTriggerInterstitial(false);
 		router.push("/start");
 	};
 
 	return (
 		<div className='min-h-screen bg-[#0f172a] text-white p-4 flex flex-col'>
+			{/* Interstitial Ad */}
+			<FullscreenAd 
+				show={triggerInterstitial} 
+				onClose={handleAdClose} 
+			/>
+
 			{/* Ad Banner */}
-				<AdSenseBanner />
-		<label style={{
-  display: 'block',
-  margin: '0px auto',
-  width: 'fit-content',
-  letterSpacing: '4px',
-  color: 'rgb(65, 77, 101)',
-  font: '400 9px / 2 Arial, sans-serif',
-  opacity: 0.7
-}}>
-  ADVERTISEMENT
-</label>
-			{/* <div className="text-center text-xs text-gray-400 mb-4">ADVERTISEMENT</div> */}
+			<AdSenseBanner />
+			<label style={{
+				display: 'block',
+				margin: '0px auto',
+				width: 'fit-content',
+				letterSpacing: '4px',
+				color: 'rgb(65, 77, 101)',
+				font: '400 9px / 2 Arial, sans-serif',
+				opacity: 0.7
+			}}>
+				ADVERTISEMENT
+			</label>
 
 			{/* Main Card */}
 			<div className='bg-white rounded-2xl p-6 shadow-lg mb-8'>
