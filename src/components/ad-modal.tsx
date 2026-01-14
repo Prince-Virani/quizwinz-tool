@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Coins, Play, X } from "lucide-react"
+import RewardedAd from "@/components/RewardedAd"
 
 interface AdModalProps {
   isOpen: boolean
@@ -13,30 +14,78 @@ interface AdModalProps {
 
 export default function AdModal({ isOpen, onClose, onAdComplete }: AdModalProps) {
   const [isWatching, setIsWatching] = useState(false)
-  const [adProgress, setAdProgress] = useState(0)
+  const [showRewardedAd, setShowRewardedAd] = useState(false)
+  const [adTimeoutId, setAdTimeoutId] = useState<NodeJS.Timeout | null>(null)
+  const [isAdLoading, setIsAdLoading] = useState(false)
 
-  if (!isOpen) return null
+  useEffect(() => {
+    if (!isOpen) {
+      setIsWatching(false)
+      setShowRewardedAd(false)
+      setIsAdLoading(false)
+      if (adTimeoutId) {
+        clearTimeout(adTimeoutId)
+        setAdTimeoutId(null)
+      }
+    }
+  }, [isOpen, adTimeoutId])
 
-  const watchAd = () => {
+  const handleWatchAd = () => {
+    setIsAdLoading(true)
     setIsWatching(true)
-    setAdProgress(0)
+    setShowRewardedAd(true)
 
-    // Simulate ad watching with progress
-    const interval = setInterval(() => {
-      setAdProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval)
-          setTimeout(() => {
-            setIsWatching(false)
-            onAdComplete()
-            onClose()
-          }, 500)
-          return 100
-        }
-        return prev + 2 // 5 second ad (100/2 = 50 intervals * 100ms = 5s)
-      })
+    // Fallback timeout: if ad doesn't complete in 8 seconds, proceed anyway
+    const timeout = setTimeout(() => {
+      console.log("Ad timeout - completing reward as fallback")
+      handleRewardComplete()
+    }, 8000)
+
+    setAdTimeoutId(timeout)
+  }
+
+  const handleAdShown = () => {
+    // Ad is ready, clear the timeout
+    if (adTimeoutId) {
+      console.log("Ad loaded - clearing fallback timer")
+      clearTimeout(adTimeoutId)
+      setAdTimeoutId(null)
+    }
+    setIsAdLoading(false)
+  }
+
+  const handleRewardComplete = () => {
+    // Clear any remaining timeout
+    if (adTimeoutId) {
+      clearTimeout(adTimeoutId)
+      setAdTimeoutId(null)
+    }
+
+    console.log("User earned reward!")
+    setShowRewardedAd(false)
+    setIsWatching(false)
+    setIsAdLoading(false)
+
+    // Delay to allow cleanup
+    setTimeout(() => {
+      onAdComplete()
+      onClose()
     }, 100)
   }
+
+  const handleAdClosed = () => {
+    // Only close ad, don't proceed (user closed without watching)
+    setShowRewardedAd(false)
+    setIsWatching(false)
+    setIsAdLoading(false)
+
+    if (adTimeoutId) {
+      clearTimeout(adTimeoutId)
+      setAdTimeoutId(null)
+    }
+  }
+
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
@@ -61,39 +110,38 @@ export default function AdModal({ isOpen, onClose, onAdComplete }: AdModalProps)
               </div>
 
               <Button
-                onClick={watchAd}
-                className="w-full bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 hover:from-orange-500 hover:to-yellow-600"
+                onClick={handleWatchAd}
+                disabled={isAdLoading}
+                className="w-full bg-gradient-to-r from-orange-400 to-yellow-500 text-slate-900 hover:from-orange-500 hover:to-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Play className="w-4 h-4 mr-2" />
-                Watch Ad
+                {isAdLoading ? "Loading Ad..." : "Watch Ad"}
               </Button>
             </>
           ) : (
             <div className="text-center">
               <h3 className="text-lg font-semibold text-white mb-4">Watching Ad...</h3>
 
-              <div className="mb-6">
-                <div className="w-full bg-slate-700 rounded-full h-3 mb-2">
-                  <div
-                    className="bg-gradient-to-r from-orange-400 to-yellow-500 h-3 rounded-full transition-all duration-100"
-                    style={{ width: `${adProgress}%` }}
-                  />
+              <div className="bg-slate-700 rounded-lg p-8 mb-4 min-h-32 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="animate-spin mb-3">
+                    <div className="w-8 h-8 border-3 border-slate-600 border-t-yellow-500 rounded-full mx-auto"></div>
+                  </div>
+                  <p className="text-slate-400 text-sm">Complete the ad to earn coins</p>
                 </div>
-                <p className="text-sm text-slate-400">{Math.round(adProgress)}% complete</p>
               </div>
 
-              <div className="bg-slate-700 rounded-lg p-8 mb-4">
-                <div className="animate-pulse">
-                  <div className="bg-slate-600 rounded h-4 mb-2"></div>
-                  <div className="bg-slate-600 rounded h-4 w-3/4 mb-2"></div>
-                  <div className="bg-slate-600 rounded h-4 w-1/2"></div>
-                </div>
-                <p className="text-center text-slate-400 mt-4 text-sm">[Simulated Ad Content]</p>
-              </div>
-
-              {adProgress === 100 && <div className="text-green-400 font-semibold">Ad Complete! +100 Coins Added</div>}
+              <p className="text-slate-400 text-xs">Do not close this window</p>
             </div>
           )}
+
+          {/* Rewarded Ad Component */}
+          <RewardedAd
+            show={showRewardedAd}
+            onReward={handleRewardComplete}
+            onClose={handleAdClosed}
+            onAdShown={handleAdShown}
+          />
         </CardContent>
       </Card>
     </div>
