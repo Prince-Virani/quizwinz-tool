@@ -223,7 +223,7 @@ export default function WelcomePage() {
 
     if (showReward) {
         return (
-            <div className='min-h-screen flex items-center justify-center p-4 bg-slate-900'>
+            <div className='min-h-screen flex items-center justify-center p-1 bg-slate-900'>
                 
                 <Card className='w-full max-w-md bg-slate-800 border-slate-700'>
                     <AdSenseBanner />
@@ -231,7 +231,7 @@ export default function WelcomePage() {
                         ADVERTISEMENT
                     </label>
                     <CardContent className='text-center'>
-                        <div className='mb-6'>
+                        <div className='mb-3'>
                             <Image 
                                 src='/coin.png' 
                                 width={80} 
