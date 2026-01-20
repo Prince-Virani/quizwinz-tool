@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Trophy, Star, Users, Award, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AdSenseBanner from "@/components/adSenseBanner";
@@ -9,21 +9,49 @@ import FullscreenAd from "@/components/fullScreen";
 export default function ResultPage() {
 	const router = useRouter();
 	const [triggerInterstitial, setTriggerInterstitial] = useState(false);
+	const [isAdReady, setIsAdReady] = useState(false);
+
+	// Pre-load interstitial ad when page mounts
+	useEffect(() => {
+		console.log("Pre-loading interstitial ad...");
+		setTriggerInterstitial(true);
+		
+		// Mark ad as ready after a small delay to ensure it's initialized
+		const readyTimer = setTimeout(() => {
+			setIsAdReady(true);
+			console.log("Interstitial ad is ready!");
+		}, 500);
+
+		return () => clearTimeout(readyTimer);
+	}, []);
 
 	const handlePlayNow = () => {
-		// Show interstitial ad before navigating
-		setTriggerInterstitial(true);
+		// If ad is already loaded, show it immediately
+		if (isAdReady) {
+			console.log("Showing pre-loaded interstitial ad");
+			// Ad is already showing, just wait for it to close
+		} else {
+			// If not ready yet, trigger it now
+			console.log("Ad not ready yet, triggering now...");
+			setTriggerInterstitial(true);
+		}
 	};
 
 	const handleAdClose = () => {
 		// Ad is closed, now navigate to the next page
+		console.log("Ad closed, navigating to /start");
 		setTriggerInterstitial(false);
-		router.push("/start");
+		setIsAdReady(false);
+		
+		// Delay navigation slightly to ensure ad state updates
+		setTimeout(() => {
+			router.push("/start");
+		}, 100);
 	};
 
 	return (
 		<div className='min-h-screen bg-[#0f172a] text-white p-4 flex flex-col'>
-			{/* Interstitial Ad */}
+			{/* Interstitial Ad - Pre-loaded and ready to show */}
 			<FullscreenAd 
 				show={triggerInterstitial} 
 				onClose={handleAdClose} 
