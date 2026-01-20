@@ -10,68 +10,60 @@ export default function ResultPage() {
 	const router = useRouter();
 	const [triggerInterstitial, setTriggerInterstitial] = useState(false);
 	const [showAd, setShowAd] = useState(false);
-	const [adLoadTimeout, setAdLoadTimeout] = useState<NodeJS.Timeout | null>(null);
-	const [adLoaded, setAdLoaded] = useState(false);
+	const [adTimeout, setAdTimeout] = useState<NodeJS.Timeout | null>(null);
 
-	// Initialize when page mounts
+	// Pre-load the ad component in background (DON'T show it)
 	useEffect(() => {
 		console.log("=== Result Page Mounted ===");
-		console.log("Pre-loading interstitial ad in background...");
-		// Pre-load the ad component (but don't show it yet)
-		setTriggerInterstitial(true);
-		setShowAd(true);
+		console.log("Pre-loading ad component in background (hidden)...");
 		
-		// FALLBACK: If ad doesn't load within 5 seconds, allow skip
-		const timeout = setTimeout(() => {
-			console.warn("⚠️ Ad failed to load within 5 seconds - allowing skip");
-			setAdLoaded(true); // Allow user to proceed
-		}, 5000);
-
-		setAdLoadTimeout(timeout);
+		// Just set triggerInterstitial to true to initialize/load the ad
+		// BUT keep showAd as false so it doesn't display yet
+		setTriggerInterstitial(true);
+		setShowAd(false);
 
 		return () => {
-			if (timeout) clearTimeout(timeout);
+			if (adTimeout) clearTimeout(adTimeout);
 		};
-	}, []);
+	}, [adTimeout]);
 
 	const handlePlayNow = () => {
 		console.log("=== Play Now Button Clicked ===");
-		console.log("Ad loaded status:", adLoaded);
+		console.log("Showing pre-loaded ad now...");
 		
-		if (adLoaded) {
-			console.log("⚠️ Ad failed to load - skipping to next page");
-			// Ad didn't load, skip directly
-			setTimeout(() => {
-				router.push("/start");
-			}, 300);
-		} else {
-			console.log("Ad already pre-loaded, showing now...");
-			// Ad is loaded, show it
-			setShowAd(true);
-			setTriggerInterstitial(true);
-		}
+		// NOW show the ad that was pre-loaded
+		setShowAd(true);
+		
+		// Fallback: If ad doesn't close within 6 seconds, force navigation
+		const timeout = setTimeout(() => {
+			console.warn("⚠️ Ad didn't respond in 6 seconds - forcing navigation");
+			handleNavigate();
+		}, 6000);
+
+		setAdTimeout(timeout);
 	};
 
-	const handleAdClose = () => {
-		console.log("=== Ad Close Handler Called ===");
-		console.log("User closed the ad");
-		
-		// Clear any pending timeout
-		if (adLoadTimeout) {
-			clearTimeout(adLoadTimeout);
+	const handleNavigate = () => {
+		console.log("=== Navigating to /start ===");
+		// Clear any pending timeouts
+		if (adTimeout) {
+			clearTimeout(adTimeout);
+			setAdTimeout(null);
 		}
 		
-		// Mark ad as loaded (so we know it worked)
-		setAdLoaded(true);
+		// Reset states
 		setShowAd(false);
 		setTriggerInterstitial(false);
 		
-		// Only navigate AFTER confirming ad is closed
-		console.log("Ad confirmed closed, navigating in 500ms...");
+		// Navigate
 		setTimeout(() => {
-			console.log("Navigating to /start...");
 			router.push("/start");
-		}, 500);
+		}, 300);
+	};
+
+	const handleAdClose = () => {
+		console.log("=== Ad Closed Successfully ===");
+		handleNavigate();
 	};
 
 	return (
