@@ -85,9 +85,9 @@ const demoQuestions = [
     {
         id: 11,
         question: "What is the boiling point of water at sea level?",
-        options: ["90Â°C", "100Â°C", "110Â°C", "120Â°C"],
+        options: ["90°C", "100°C", "110°C", "120°C"],
         correct: 1,
-        funFact: "Water boils at 100Â°C (212Â°F) at standard atmospheric pressure.",
+        funFact: "Water boils at 100°C (212°F) at standard atmospheric pressure.",
     },
     {
         id: 12,
@@ -132,7 +132,6 @@ export default function WelcomePage() {
         setIsClaimDisabled(true);
         setShowAd(true);
 
-        // Fallback timeout: if ad doesn't complete in 6 seconds, proceed anyway
         const timeout = setTimeout(() => {
             console.log("Ad timeout - granting reward as fallback");
             handleRewardGiven();
@@ -142,7 +141,6 @@ export default function WelcomePage() {
     };
 
     const handleAdShown = () => {
-        // Ad is ready, clear the timeout
         if (adTimeoutId) {
             console.log("Ad loaded - clearing fallback timer");
             clearTimeout(adTimeoutId);
@@ -151,7 +149,6 @@ export default function WelcomePage() {
     };
 
     const handleRewardGiven = () => {
-        // Clear any remaining timeout
         if (adTimeoutId) {
             clearTimeout(adTimeoutId);
             setAdTimeoutId(null);
@@ -161,18 +158,15 @@ export default function WelcomePage() {
         setShowAd(false);
         setIsClaimDisabled(false);
         
-        // Delay navigation slightly to ensure cleanup
         setTimeout(() => {
             handleContinue();
         }, 100);
     };
 
     const handleAdClosed = () => {
-        // Only close ad, don't proceed (user closed without watching)
         setShowAd(false);
         setIsClaimDisabled(false);
         
-        // Clear timeout if still pending
         if (adTimeoutId) {
             clearTimeout(adTimeoutId);
             setAdTimeoutId(null);
@@ -181,7 +175,8 @@ export default function WelcomePage() {
 
     useEffect(() => {
         setRandomQuestions(getRandomQuestions(demoQuestions, 2));
-
+        
+        // PRE-LOAD INTERSTITIAL AD BEFORE FIRST QUESTION
         setTriggerInterstitial(true);
         
         const adTimer = setTimeout(() => {
@@ -191,7 +186,41 @@ export default function WelcomePage() {
         return () => clearTimeout(adTimer);
     }, []);
 
-handleAnswerSelect 
+    const handleAnswerSelect = (e: React.MouseEvent<HTMLAnchorElement>, answerIndex: number) => {
+        e.preventDefault(); 
+        
+        if (!showResult) {
+            setSelectedAnswer(answerIndex);
+            setShowResult(true);
+
+            setTimeout(() => {
+                const newAnswers = [...answers, answerIndex];
+                setAnswers(newAnswers);
+
+                if (currentQuestion < randomQuestions.length - 1) {
+                    setCurrentQuestion(currentQuestion + 1);
+                    setSelectedAnswer(null);
+                    setShowResult(false);
+                    // Close interstitial before moving to next question
+                    setTriggerInterstitial(false);
+                    // Reload it for next question
+                    setTimeout(() => {
+                        setTriggerInterstitial(true);
+                    }, 500);
+                } else {
+                    const correctAnswers = newAnswers.filter(
+                        (answer, index) => answer === randomQuestions[index].correct
+                    ).length;
+                    
+                    const reward = correctAnswers * 100 + 100;
+                    const currentCoins = Number.parseInt(localStorage.getItem("quizwinz-coins") || "0");
+                    localStorage.setItem("quizwinz-coins", (currentCoins + reward).toString());
+                    
+                    setShowReward(true);
+                }
+            }, 2000);
+        }
+    };
 
     if (showReward) {
         return (
