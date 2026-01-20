@@ -181,6 +181,8 @@ export default function WelcomePage() {
 
     useEffect(() => {
         setRandomQuestions(getRandomQuestions(demoQuestions, 2));
+
+        setTriggerInterstitial(true);
         
         const adTimer = setTimeout(() => {
             setIsAdOpen(true);
@@ -189,40 +191,7 @@ export default function WelcomePage() {
         return () => clearTimeout(adTimer);
     }, []);
 
-const handleAnswerSelect = (e: React.MouseEvent<HTMLAnchorElement>, answerIndex: number) => {
-    e.preventDefault(); 
-    
-    if (!showResult) {
-        setSelectedAnswer(answerIndex);
-        setShowResult(true);
-        
-        // Trigger interstitial immediately
-        setTriggerInterstitial(true);
-
-        setTimeout(() => {
-            const newAnswers = [...answers, answerIndex];
-            setAnswers(newAnswers);
-
-            if (currentQuestion < randomQuestions.length - 1) {
-                setCurrentQuestion(currentQuestion + 1);
-                setSelectedAnswer(null);
-                setShowResult(false);
-                // IMPORTANT: Reset interstitial here so next answer click triggers it fresh
-                setTriggerInterstitial(false);
-            } else {
-                const correctAnswers = newAnswers.filter(
-                    (answer, index) => answer === randomQuestions[index].correct
-                ).length;
-                
-                const reward = correctAnswers * 100 + 100;
-                const currentCoins = Number.parseInt(localStorage.getItem("quizwinz-coins") || "0");
-                localStorage.setItem("quizwinz-coins", (currentCoins + reward).toString());
-                
-                setShowReward(true);
-            }
-        }, 2000);
-    }
-};
+handleAnswerSelect 
 
     if (showReward) {
         return (
