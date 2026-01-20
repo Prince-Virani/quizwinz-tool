@@ -14,18 +14,18 @@ export default function ResultPage() {
 	// Initialize when page mounts
 	useEffect(() => {
 		console.log("=== Result Page Mounted ===");
-		console.log("Page ready for ad...");
-		// Don't show it yet, just prepare it
-		setShowAd(false);
+		console.log("Pre-loading interstitial ad in background...");
+		// Pre-load the ad component (but don't show it yet)
+		setTriggerInterstitial(true);
+		setShowAd(true);
 	}, []);
 
 	const handlePlayNow = () => {
 		console.log("=== Play Now Button Clicked ===");
-		console.log("Triggering interstitial ad to show...");
-		
-		// This will trigger the ad to show
-		setTriggerInterstitial(true);
+		console.log("Ad already pre-loaded, showing now...");
+		// Ad is already loaded, just ensure it's visible
 		setShowAd(true);
+		setTriggerInterstitial(true);
 	};
 
 	const handleAdClose = () => {
