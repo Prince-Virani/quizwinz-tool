@@ -224,11 +224,11 @@ export default function WelcomePage() {
     if (showReward) {
         return (
             <div className='min-h-screen flex items-center justify-center p-4 bg-slate-900'>
-                <Card className='w-full max-w-md bg-slate-800 border-slate-700'>
-                    <AdSenseBanner />
+                <AdSenseBanner />
                     <label style={{ display: 'block', margin: '0px auto', width: 'fit-content', letterSpacing: '4px', color: 'rgb(65, 77, 101)', font: '400 9px / 2 Arial, sans-serif', opacity: 0.7 }}>
                         ADVERTISEMENT
                     </label>
+                <Card className='w-full max-w-md bg-slate-800 border-slate-700'>
                     <CardContent className='p-8 text-center'>
                         <div className='mb-6'>
                             <Image 
