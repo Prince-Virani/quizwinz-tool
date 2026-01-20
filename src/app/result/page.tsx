@@ -10,6 +10,8 @@ export default function ResultPage() {
 	const router = useRouter();
 	const [triggerInterstitial, setTriggerInterstitial] = useState(false);
 	const [showAd, setShowAd] = useState(false);
+	const [adLoadTimeout, setAdLoadTimeout] = useState<NodeJS.Timeout | null>(null);
+	const [adLoaded, setAdLoaded] = useState(false);
 
 	// Initialize when page mounts
 	useEffect(() => {
@@ -18,21 +20,49 @@ export default function ResultPage() {
 		// Pre-load the ad component (but don't show it yet)
 		setTriggerInterstitial(true);
 		setShowAd(true);
+		
+		// FALLBACK: If ad doesn't load within 5 seconds, allow skip
+		const timeout = setTimeout(() => {
+			console.warn("⚠️ Ad failed to load within 5 seconds - allowing skip");
+			setAdLoaded(true); // Allow user to proceed
+		}, 5000);
+
+		setAdLoadTimeout(timeout);
+
+		return () => {
+			if (timeout) clearTimeout(timeout);
+		};
 	}, []);
 
 	const handlePlayNow = () => {
 		console.log("=== Play Now Button Clicked ===");
-		console.log("Ad already pre-loaded, showing now...");
-		// Ad is already loaded, just ensure it's visible
-		setShowAd(true);
-		setTriggerInterstitial(true);
+		console.log("Ad loaded status:", adLoaded);
+		
+		if (adLoaded) {
+			console.log("⚠️ Ad failed to load - skipping to next page");
+			// Ad didn't load, skip directly
+			setTimeout(() => {
+				router.push("/start");
+			}, 300);
+		} else {
+			console.log("Ad already pre-loaded, showing now...");
+			// Ad is loaded, show it
+			setShowAd(true);
+			setTriggerInterstitial(true);
+		}
 	};
 
 	const handleAdClose = () => {
 		console.log("=== Ad Close Handler Called ===");
 		console.log("User closed the ad");
 		
-		// Mark ad as closed
+		// Clear any pending timeout
+		if (adLoadTimeout) {
+			clearTimeout(adLoadTimeout);
+		}
+		
+		// Mark ad as loaded (so we know it worked)
+		setAdLoaded(true);
 		setShowAd(false);
 		setTriggerInterstitial(false);
 		
