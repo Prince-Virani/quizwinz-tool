@@ -230,7 +230,7 @@ export default function WelcomePage() {
                     <label style={{ display: 'block', margin: '0px auto', width: 'fit-content', letterSpacing: '4px', color: 'rgb(65, 77, 101)', font: '400 9px / 2 Arial, sans-serif', opacity: 0.7 }}>
                         ADVERTISEMENT
                     </label>
-                    <CardContent className='p-8 text-center'>
+                    <CardContent className='text-center'>
                         <div className='mb-6'>
                             <Image 
                                 src='/coin.png' 
