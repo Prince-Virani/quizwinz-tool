@@ -26,14 +26,17 @@ export default function ResultPage() {
 	}, []);
 
 	const handlePlayNow = () => {
-		// If ad is already loaded, show it immediately
-		if (isAdReady) {
-			console.log("Showing pre-loaded interstitial ad");
-			// Ad is already showing, just wait for it to close
+		console.log("Play Now clicked!");
+		console.log("Is Ad Ready?", isAdReady);
+		
+		// Force show the ad when button is clicked
+		setTriggerInterstitial(true);
+		
+		// If ad is not ready, trigger it to load
+		if (!isAdReady) {
+			console.log("Ad not ready yet, forcing trigger now...");
 		} else {
-			// If not ready yet, trigger it now
-			console.log("Ad not ready yet, triggering now...");
-			setTriggerInterstitial(true);
+			console.log("Ad is ready, showing now...");
 		}
 	};
 
@@ -43,10 +46,11 @@ export default function ResultPage() {
 		setTriggerInterstitial(false);
 		setIsAdReady(false);
 		
-		// Delay navigation slightly to ensure ad state updates
+		// Delay navigation to ensure ad closes first
 		setTimeout(() => {
+			console.log("Navigating to /start...");
 			router.push("/start");
-		}, 100);
+		}, 300);
 	};
 
 	return (
