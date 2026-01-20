@@ -9,16 +9,14 @@ import FullscreenAd from "@/components/fullScreen";
 export default function ResultPage() {
 	const router = useRouter();
 	const [triggerInterstitial, setTriggerInterstitial] = useState(false);
-	const [adClosed, setAdClosed] = useState(false);
 	const [showAd, setShowAd] = useState(false);
 
-	// Pre-load interstitial ad when page mounts
+	// Initialize when page mounts
 	useEffect(() => {
 		console.log("=== Result Page Mounted ===");
-		console.log("Pre-loading interstitial ad...");
+		console.log("Page ready for ad...");
 		// Don't show it yet, just prepare it
 		setShowAd(false);
-		setAdClosed(false);
 	}, []);
 
 	const handlePlayNow = () => {
@@ -36,7 +34,6 @@ export default function ResultPage() {
 		console.log("User closed the ad");
 		
 		// Mark ad as closed
-		setAdClosed(true);
 		setShowAd(false);
 		setTriggerInterstitial(false);
 		
