@@ -9,57 +9,54 @@ import FullscreenAd from "@/components/fullScreen";
 export default function ResultPage() {
 	const router = useRouter();
 	const [triggerInterstitial, setTriggerInterstitial] = useState(false);
-	const [isAdReady, setIsAdReady] = useState(false);
+	const [adClosed, setAdClosed] = useState(false);
+	const [showAd, setShowAd] = useState(false);
 
 	// Pre-load interstitial ad when page mounts
 	useEffect(() => {
+		console.log("=== Result Page Mounted ===");
 		console.log("Pre-loading interstitial ad...");
-		setTriggerInterstitial(true);
-		
-		// Mark ad as ready after a small delay to ensure it's initialized
-		const readyTimer = setTimeout(() => {
-			setIsAdReady(true);
-			console.log("Interstitial ad is ready!");
-		}, 500);
-
-		return () => clearTimeout(readyTimer);
+		// Don't show it yet, just prepare it
+		setShowAd(false);
+		setAdClosed(false);
 	}, []);
 
 	const handlePlayNow = () => {
-		console.log("Play Now clicked!");
-		console.log("Is Ad Ready?", isAdReady);
+		console.log("=== Play Now Button Clicked ===");
+		console.log("Triggering interstitial ad to show...");
 		
-		// Force show the ad when button is clicked
+		// This will trigger the ad to show
 		setTriggerInterstitial(true);
-		
-		// If ad is not ready, trigger it to load
-		if (!isAdReady) {
-			console.log("Ad not ready yet, forcing trigger now...");
-		} else {
-			console.log("Ad is ready, showing now...");
-		}
+		setShowAd(true);
+		setAdClosed(false);
 	};
 
 	const handleAdClose = () => {
-		// Ad is closed, now navigate to the next page
-		console.log("Ad closed, navigating to /start");
-		setTriggerInterstitial(false);
-		setIsAdReady(false);
+		console.log("=== Ad Close Handler Called ===");
+		console.log("User closed the ad");
 		
-		// Delay navigation to ensure ad closes first
+		// Mark ad as closed
+		setAdClosed(true);
+		setShowAd(false);
+		setTriggerInterstitial(false);
+		
+		// Only navigate AFTER confirming ad is closed
+		console.log("Ad confirmed closed, navigating in 500ms...");
 		setTimeout(() => {
 			console.log("Navigating to /start...");
 			router.push("/start");
-		}, 300);
+		}, 500);
 	};
 
 	return (
 		<div className='min-h-screen bg-[#0f172a] text-white p-4 flex flex-col'>
-			{/* Interstitial Ad - Pre-loaded and ready to show */}
-			<FullscreenAd 
-				show={triggerInterstitial} 
-				onClose={handleAdClose} 
-			/>
+			{/* Interstitial Ad - Only shows when showAd is true */}
+			{showAd && (
+				<FullscreenAd 
+					show={triggerInterstitial} 
+					onClose={handleAdClose} 
+				/>
+			)}
 
 			{/* Ad Banner */}
 			<AdSenseBanner />
@@ -85,10 +82,20 @@ export default function ResultPage() {
 						You Have got{" "}
 						<span className='text-orange-500'>100 coins</span>
 					</h1>
+					<p className='text-gray-600 text-center mb-4'>
+						Watch an ad to play again and earn more coins!
+					</p>
 					<button
 						onClick={handlePlayNow}
-						className='bg-gradient-to-r from-orange-400 to-yellow-500 cursor-pointer hover:from-orange-500 hover:to-yellow-600 text-white font-bold py-3 px-8 rounded-full text-lg mt-4 w-full max-w-xs transition-colors'>
-						Play Now
+						disabled={showAd}
+						className={`
+							bg-gradient-to-r from-orange-400 to-yellow-500 
+							cursor-pointer hover:from-orange-500 hover:to-yellow-600 
+							text-white font-bold py-3 px-8 rounded-full text-lg 
+							mt-4 w-full max-w-xs transition-colors
+							${showAd ? 'opacity-50 cursor-not-allowed' : ''}
+						`}>
+						{showAd ? 'Loading Ad...' : 'Play Now'}
 					</button>
 				</div>
 			</div>
