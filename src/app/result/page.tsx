@@ -26,7 +26,6 @@ export default function ResultPage() {
 		// This will trigger the ad to show
 		setTriggerInterstitial(true);
 		setShowAd(true);
-		setAdClosed(false);
 	};
 
 	const handleAdClose = () => {
