@@ -38,7 +38,7 @@ export default function ResultPage() {
 		const timeout = setTimeout(() => {
 			console.warn("⚠️ Ad didn't respond in 6 seconds - forcing navigation");
 			handleNavigate();
-		}, 6000);
+		}, 2000);
 
 		setAdTimeout(timeout);
 	};
