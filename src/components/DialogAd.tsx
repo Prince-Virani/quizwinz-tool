@@ -1,8 +1,8 @@
 "use client";
 
-import { X } from "lucide-react";
+// import { X } from "lucide-react";
 import { useEffect } from "react";
-import Popupnative from "@/components/popupnative";
+// import Popupnative from "@/components/popupnative";
 
 interface DialogAdProps {
   isOpen: boolean;
