@@ -33,7 +33,7 @@ export default function PrivacyPage() {
 								Information We Collect
 							</h3>
 							<p>
-								coinmoro Quiz is designed to work without requiring
+								Newswithlk Quiz is designed to work without requiring
 								personal information. We only collect:
 							</p>
 							<ul className='list-disc list-inside space-y-1 mt-2'>

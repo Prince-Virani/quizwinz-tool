@@ -11,16 +11,16 @@ export default function AboutPage() {
           <Link href="/start" className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
             <ArrowLeft className="w-6 h-6 text-slate-300" />
           </Link>
-          <h1 className="text-2xl font-bold text-white">About coinmoro Quiz</h1>
+          <h1 className="text-2xl font-bold text-white">About Newswithlk Quiz</h1>
         </div>
 
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-orange-400">Welcome to coinmoro Quiz</CardTitle>
+            <CardTitle className="text-orange-400">Welcome to Newswithlk Quiz</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-slate-300">
             <p>
-              coinmoro Quiz is an engaging quiz platform where knowledge meets rewards. Test your skills across various
+              Newswithlk Quiz is an engaging quiz platform where knowledge meets rewards. Test your skills across various
               categories and earn coins for every correct answer!
             </p>
 

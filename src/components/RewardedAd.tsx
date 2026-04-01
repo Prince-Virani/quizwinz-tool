@@ -52,7 +52,7 @@ interface RewardedAdProps {
 }
 
 export default function RewardedAd({ show, onReward, onClose, onAdShown }: RewardedAdProps) {
-  const adUnitPath = "/23287200353/quiz1reward"; 
+  const adUnitPath = "/23282051127/quiz1.rewards"; 
   const processingRef = useRef(false);
   const listenerCleanupRef = useRef<Array<() => void>>([]);
   const callbacksRef = useRef({ onReward, onClose, onAdShown });

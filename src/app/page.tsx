@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, XCircle } from "lucide-react";
 import AdSenseBanner from "@/components/adSenseBanner";
-import DialogAd from "@/components/DialogAd";
+// import DialogAd from "@/components/DialogAd";
 import FullscreenAd from "@/components/fullScreen";
 import RewardedAd from "@/components/RewardedAd";
 

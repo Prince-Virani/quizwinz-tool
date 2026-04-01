@@ -9,27 +9,27 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "coinmoro Quiz - Play and Win Rewards",
-    template: "%s | coinmoro Quiz",
+    default: "Newswithlk Quiz - Play and Win Rewards",
+    template: "%s | Newswithlk Quiz",
   },
   description:
     "Play engaging quizzes and earn reward coins. Test your knowledge and win exciting prizes with Quizwinz.",
   keywords:
     "quiz, rewards, play, win, quizzes, knowledge, games, online quizzes",
-  authors: [{ name: "coinmoro Quiz" }],
-  creator: "coinmoro Quiz",
+  authors: [{ name: "Newswithlk Quiz" }],
+  creator: "Newswithlk Quiz",
   openGraph: {
-    title: "coinmoro Quiz - Play and Win Rewards",
+    title: "Newswithlk Quiz - Play and Win Rewards",
     description:
       "Play engaging quizzes and earn reward coins. Test your knowledge and win exciting prizes with Quizwinz.",
-    url: "https://quiz1.coinmoro.com/",
-    siteName: "coinmoro Quiz",
+    url: "https://quiz1.newswithlk.in/",
+    siteName: "Newswithlk Quiz",
     images: [
       {
-        url: "https://quiz1.coinmoro.com/og-image.png",
+        url: "https://quiz1.newswithlk.in/og-image.png",
         width: 1200,
         height: 630,
-        alt: "coinmoro Quiz Logo",
+        alt: "Newswithlk Quiz Logo",
       },
     ],
     locale: "en_US",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://quiz1.coinmoro.com",
+    canonical: "https://quiz1.newswithlk.in",
   },
 };
 
@@ -95,7 +95,7 @@ export default function RootLayout({
         /> 
         */}
 
-        <meta name='application-name' content='coinmoro Quiz' />
+        <meta name='application-name' content='Newswithlk Quiz' />
         <meta name='format-detection' content='telephone=no' />
         <meta name='theme-color' content='#000000' />
         <link rel='shortcut icon' href='/favicon.ico' />
