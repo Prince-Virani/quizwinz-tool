@@ -117,7 +117,7 @@ export default function WelcomePage() {
     const [isClaimDisabled, setIsClaimDisabled] = useState(false);
 
     // Other Ad states
-    const [isAdOpen, setIsAdOpen] = useState(false);
+    // const [isAdOpen, setIsAdOpen] = useState(false);
     const [triggerInterstitial, setTriggerInterstitial] = useState(false);
 
     const router = useRouter();
@@ -179,11 +179,11 @@ export default function WelcomePage() {
         // PRE-LOAD INTERSTITIAL AD BEFORE FIRST QUESTION
         setTriggerInterstitial(true);
         
-        const adTimer = setTimeout(() => {
-            setIsAdOpen(true);
-        }, 1000);
+        // const adTimer = setTimeout(() => {
+        //     setIsAdOpen(true);
+        // }, 1000);
 
-        return () => clearTimeout(adTimer);
+        // return () => clearTimeout(adTimer);
     }, []);
 
     const handleAnswerSelect = (e: React.MouseEvent<HTMLAnchorElement>, answerIndex: number) => {
