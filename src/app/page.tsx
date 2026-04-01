@@ -275,10 +275,10 @@ export default function WelcomePage() {
                 onClose={() => setTriggerInterstitial(false)} 
             />
 
-            <DialogAd 
+            {/* <DialogAd 
                 isOpen={isAdOpen} 
                 onClose={() => setIsAdOpen(false)} 
-            />
+            /> */}
 
             <Card className='w-full max-w-md bg-slate-800 border-slate-700'>
                 <CardContent className='p-6'>
