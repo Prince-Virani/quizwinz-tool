@@ -38,7 +38,7 @@ const initializedSlots = new Set<string>();
 let stickyAdCounter = 0;
 
 export default function StickyAd({
-  adUnitPath = "/23287200353/quiz1sticky",
+  adUnitPath = "/23282051127/quiz1.sticky",
   divId,
   position = "bottom",
   responsive = true

@@ -14,7 +14,7 @@ interface AdXBannerProps {
 const initializedSlots = new Set<string>();
 
 export default function AdSenseBanner({
-  adUnitPath = "/23287200353/quiz1native",
+  adUnitPath = "/23282051127/quiz1.native",
   divId,
   responsive = true,
   fluid = false,

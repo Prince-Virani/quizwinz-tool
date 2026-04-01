@@ -37,7 +37,7 @@ export default function FullscreenAd({
   show: boolean;
   onClose: () => void;
 }) {
-  const adUnitPath = "/23287200353/quiz1Inter";
+  const adUnitPath = "/23282051127/quiz1.inter";
   const hasInitialized = useRef(false);
 
   useEffect(() => {
