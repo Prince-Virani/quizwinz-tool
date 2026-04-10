@@ -4,23 +4,17 @@ import { useState, useEffect } from "react";
 import { Trophy, Star, Users, Award, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AdSenseBanner from "@/components/adSenseBanner";
-import FullscreenAd from "@/components/fullScreen";
+import RewardedAd from "@/components/RewardedAd";
 
 export default function ResultPage() {
 	const router = useRouter();
-	const [triggerInterstitial, setTriggerInterstitial] = useState(false);
 	const [showAd, setShowAd] = useState(false);
 	const [adTimeout, setAdTimeout] = useState<NodeJS.Timeout | null>(null);
 
 	// Pre-load the ad component in background (DON'T show it)
 	useEffect(() => {
 		console.log("=== Result Page Mounted ===");
-		console.log("Pre-loading ad component in background (hidden)...");
-		
-		// Just set triggerInterstitial to true to initialize/load the ad
-		// BUT keep showAd as false so it doesn't display yet
-		setTriggerInterstitial(true);
-		setShowAd(false);
+		console.log("Pre-loading rewarded ad component in background (hidden)...");
 
 		return () => {
 			if (adTimeout) clearTimeout(adTimeout);
@@ -30,13 +24,13 @@ export default function ResultPage() {
 	const handlePlayNow = () => {
 		console.log("=== Play Now Button Clicked ===");
 		console.log("Showing pre-loaded ad now...");
-		
+
 		// NOW show the ad that was pre-loaded
 		setShowAd(true);
-		
-		// Fallback: If ad doesn't close within 6 seconds, force navigation
+
+		// Fallback: If ad doesn't close within 2 seconds, force navigation
 		const timeout = setTimeout(() => {
-			console.warn("⚠️ Ad didn't respond in 6 seconds - forcing navigation");
+			console.warn("⚠️ Ad didn't respond in 2 seconds - forcing navigation");
 			handleNavigate();
 		}, 2000);
 
@@ -50,11 +44,10 @@ export default function ResultPage() {
 			clearTimeout(adTimeout);
 			setAdTimeout(null);
 		}
-		
+
 		// Reset states
 		setShowAd(false);
-		setTriggerInterstitial(false);
-		
+
 		// Navigate
 		setTimeout(() => {
 			router.push("/start");
@@ -68,13 +61,14 @@ export default function ResultPage() {
 
 	return (
 		<div className='min-h-screen bg-[#0f172a] text-white p-4 flex flex-col'>
-			{/* Interstitial Ad - Only shows when showAd is true */}
-			{showAd && (
-				<FullscreenAd 
-					show={triggerInterstitial} 
-					onClose={handleAdClose} 
-				/>
-			)}
+			{/* Rewarded Ad - Preloaded due to load={true}, shows when showAd={true} */}
+			<RewardedAd
+				load={true}
+				show={showAd}
+				adUnitPath="/23282051127/quiz1.rewards2"
+				onReward={() => console.log("=== Reward Granted ===")}
+				onClose={handleAdClose}
+			/>
 
 			{/* Ad Banner */}
 			<AdSenseBanner />

@@ -46,24 +46,35 @@ let isServicesEnabled = false;
 
 interface RewardedAdProps {
   show: boolean;
+  load?: boolean;
   onReward: () => void;
   onClose: () => void;
-  onAdShown: () => void; 
+  onAdShown?: () => void; 
+  adUnitPath?: string;
 }
 
-export default function RewardedAd({ show, onReward, onClose, onAdShown }: RewardedAdProps) {
-  const adUnitPath = "/23282051127/quiz1.rewards"; 
+export default function RewardedAd({ show, load = false, onReward, onClose, onAdShown, adUnitPath = "/23282051127/quiz1.rewards" }: RewardedAdProps) {
   const processingRef = useRef(false);
   const listenerCleanupRef = useRef<Array<() => void>>([]);
   const callbacksRef = useRef({ onReward, onClose, onAdShown });
+  const makeVisibleRef = useRef<(() => void) | null>(null);
+  const showRef = useRef(show);
 
   // Update callback refs without retriggering effect
   useEffect(() => {
     callbacksRef.current = { onReward, onClose, onAdShown };
-  }, [onReward, onClose, onAdShown]);
+    showRef.current = show;
+  }, [onReward, onClose, onAdShown, show]);
 
   useEffect(() => {
-    if (!show) {
+    if (show && makeVisibleRef.current) {
+      makeVisibleRef.current();
+      makeVisibleRef.current = null;
+    }
+  }, [show]);
+
+  useEffect(() => {
+    if (!show && !load) {
       processingRef.current = false;
       return;
     }
@@ -97,13 +108,21 @@ export default function RewardedAd({ show, onReward, onClose, onAdShown }: Rewar
                 // --- EVENT 1: AD IS READY TO SHOW ---
                 const handleRewardedReady = (event: unknown) => {
                     const rewardedEvent = event as IRewardedEvent;
-                    console.log("Ad ready. Triggering visibility...");
+                    console.log("Ad ready.");
                     
-                    // Tell parent to stop the fallback timer
-                    callbacksRef.current.onAdShown();
+                    // Tell parent ad is ready/shown
+                    if (callbacksRef.current.onAdShown) {
+                        callbacksRef.current.onAdShown();
+                    }
 
-                    // Show the ad immediately
-                    rewardedEvent.makeRewardedVisible();
+                    // Show the ad if requested, else save trigger for later
+                    if (showRef.current) {
+                        console.log("Triggering visibility immediately...");
+                        rewardedEvent.makeRewardedVisible();
+                    } else {
+                        console.log("Preloaded ad is ready. Holding visibility...");
+                        makeVisibleRef.current = rewardedEvent.makeRewardedVisible;
+                    }
                 };
 
                 // --- EVENT 2: USER EARNED REWARD ---
@@ -175,7 +194,7 @@ export default function RewardedAd({ show, onReward, onClose, onAdShown }: Rewar
       listenerCleanupRef.current = [];
     };
 
-  }, [show]);
+  }, [show, load, adUnitPath]);
 
   return null;
 }
