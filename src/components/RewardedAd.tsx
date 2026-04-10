@@ -93,6 +93,7 @@ export default function RewardedAd({ show, load = false, onReward, onClose, onAd
     googletag.cmd.push(() => {
       const pubads = googletag.pubads();
       let slot = definedSlots.get(adUnitPath);
+      let isNewSlot = false;
 
       if (!slot) {
         // --- 1. DEFINE SLOT (First Time Only) ---
@@ -104,70 +105,7 @@ export default function RewardedAd({ show, load = false, onReward, onClose, onAd
 
             if (newSlot) {
                 newSlot.addService(pubads);
-
-                // --- EVENT 1: AD IS READY TO SHOW ---
-                const handleRewardedReady = (event: unknown) => {
-                    const rewardedEvent = event as IRewardedEvent;
-                    console.log("Ad ready.");
-                    
-                    // Tell parent ad is ready/shown
-                    if (callbacksRef.current.onAdShown) {
-                        callbacksRef.current.onAdShown();
-                    }
-
-                    // Show the ad if requested, else save trigger for later
-                    if (showRef.current) {
-                        console.log("Triggering visibility immediately...");
-                        rewardedEvent.makeRewardedVisible();
-                    } else {
-                        console.log("Preloaded ad is ready. Holding visibility...");
-                        makeVisibleRef.current = rewardedEvent.makeRewardedVisible;
-                    }
-                };
-
-                // --- EVENT 2: USER EARNED REWARD ---
-                const handleRewardGrant = (event: unknown) => {
-                    console.log("Reward granted!", event);
-                    
-                    // Clean up listeners first
-                    listenerCleanupRef.current.forEach(cleanup => cleanup());
-                    listenerCleanupRef.current = [];
-                    
-                    processingRef.current = false;
-                    
-                    // Call reward callback
-                    callbacksRef.current.onReward();
-                };
-
-                // --- EVENT 3: AD CLOSED (X Button or timeout) ---
-                const handleAdClosed = () => {
-                    console.log("Ad closed by user.");
-                    
-                    // Clean up listeners
-                    listenerCleanupRef.current.forEach(cleanup => cleanup());
-                    listenerCleanupRef.current = [];
-                    
-                    processingRef.current = false;
-                    
-                    // Call close callback
-                    callbacksRef.current.onClose();
-                };
-
-                pubads.addEventListener("rewardedSlotReady", handleRewardedReady);
-                pubads.addEventListener("rewardedSlotGranted", handleRewardGrant);
-                pubads.addEventListener("rewardedSlotClosed", handleAdClosed);
-
-                // Store cleanup functions
-                listenerCleanupRef.current.push(() => {
-                    pubads.removeEventListener("rewardedSlotReady", handleRewardedReady);
-                });
-                listenerCleanupRef.current.push(() => {
-                    pubads.removeEventListener("rewardedSlotGranted", handleRewardGrant);
-                });
-                listenerCleanupRef.current.push(() => {
-                    pubads.removeEventListener("rewardedSlotClosed", handleAdClosed);
-                });
-
+                
                 // Enable services only once globally
                 if (!isServicesEnabled) {
                     googletag.enableServices();
@@ -177,15 +115,90 @@ export default function RewardedAd({ show, load = false, onReward, onClose, onAd
                 googletag.display(newSlot);
                 definedSlots.set(adUnitPath, newSlot);
                 slot = newSlot;
+                isNewSlot = true;
             }
         }
-      } else {
-        // --- REFRESH EXISTING SLOT ---
-        console.log("Refreshing existing rewarded slot...");
-        pubads.refresh([slot]);
       }
-      
-      processingRef.current = false;
+
+      if (slot) {
+          // --- EVENT 1: AD IS READY TO SHOW ---
+          const handleRewardedReady = (event: unknown) => {
+              const rewardedEvent = event as IRewardedEvent;
+              if (rewardedEvent.slot !== slot) return;
+              
+              console.log(`Ad ready: ${adUnitPath}`);
+              
+              // Tell parent ad is ready/shown
+              if (callbacksRef.current.onAdShown) {
+                  callbacksRef.current.onAdShown();
+              }
+
+              // Show the ad if requested, else save trigger for later
+              if (showRef.current) {
+                  console.log("Triggering visibility immediately...");
+                  rewardedEvent.makeRewardedVisible();
+              } else {
+                  console.log("Preloaded ad is ready. Holding visibility...");
+                  makeVisibleRef.current = rewardedEvent.makeRewardedVisible;
+              }
+          };
+
+          // --- EVENT 2: USER EARNED REWARD ---
+          const handleRewardGrant = (event: unknown) => {
+              const rewardedEvent = event as IRewardedEvent;
+              if (rewardedEvent.slot !== slot) return;
+
+              console.log(`Reward granted: ${adUnitPath}`);
+              
+              // Clean up listeners first
+              listenerCleanupRef.current.forEach(cleanup => cleanup());
+              listenerCleanupRef.current = [];
+              
+              processingRef.current = false;
+              
+              // Call reward callback
+              callbacksRef.current.onReward();
+          };
+
+          // --- EVENT 3: AD CLOSED (X Button or timeout) ---
+          const handleAdClosed = (event: unknown) => {
+              const rewardedEvent = event as IRewardedEvent;
+              if (rewardedEvent.slot !== slot) return;
+
+              console.log(`Ad closed by user: ${adUnitPath}`);
+              
+              // Clean up listeners
+              listenerCleanupRef.current.forEach(cleanup => cleanup());
+              listenerCleanupRef.current = [];
+              
+              processingRef.current = false;
+              
+              // Call close callback
+              callbacksRef.current.onClose();
+          };
+
+          pubads.addEventListener("rewardedSlotReady", handleRewardedReady);
+          pubads.addEventListener("rewardedSlotGranted", handleRewardGrant);
+          pubads.addEventListener("rewardedSlotClosed", handleAdClosed);
+
+          // Store cleanup functions
+          listenerCleanupRef.current.push(() => {
+              pubads.removeEventListener("rewardedSlotReady", handleRewardedReady);
+          });
+          listenerCleanupRef.current.push(() => {
+              pubads.removeEventListener("rewardedSlotGranted", handleRewardGrant);
+          });
+          listenerCleanupRef.current.push(() => {
+              pubads.removeEventListener("rewardedSlotClosed", handleAdClosed);
+          });
+
+          if (!isNewSlot) {
+              console.log(`Refreshing existing rewarded slot: ${adUnitPath}`);
+              pubads.refresh([slot]);
+          }
+      } else {
+          processingRef.current = false;
+      }
     });
 
     // Cleanup on unmount
